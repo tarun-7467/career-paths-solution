@@ -1,2 +1,2 @@
-# career-paths-solution
-A self-hosted job application tracker that logs each application's company, resume version, status, salary, and location, sends automated follow-up reminders, and surfaces everything in a filterable dashboard with application statistics.
+# Career Paths Solution
+Career Paths Solution is a personal tool for managing a job search end-to-end. Each application is logged with the company, the resume version used, current status, salary, and location, so nothing falls through the cracks across a long search. Automated reminders prompt follow-ups at the right time, and a dashboard summarizes application statistics with a filterable search, making it easy to see where things stand at a glance.
