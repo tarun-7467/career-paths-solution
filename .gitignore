@@ -1,7 +1,7 @@
 .env
 .venv/
-_pycache__/
+__pycache__/
 *.pyc
 db.sqlite3
 .venv312/
-.idea
+.idea/
