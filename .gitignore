@@ -1,6 +1,6 @@
 .env
 .venv/
-_pycache_/
+_pycache__/
 *.pyc
 db.sqlite3
 .venv312/
