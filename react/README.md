@@ -1,3 +1,19 @@
+For local use:
+
+1. Install node.js
+
+2. Run:
+```npm install```
+to restore dependencies
+
+4. Run:
+```npm run dev```
+to host locally.
+
+5. Navigate to http://localhost:5173/ in browser.
+
+-------------------------------------------------------------
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
