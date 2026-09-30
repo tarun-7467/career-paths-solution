@@ -2,9 +2,10 @@ import { useState } from "react";
 
 function FormEntry() {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    category: "",
+    company: "",
+    position: "",
+    status: "",
+    dateApplied: "",
     notes: "",
   });
 
@@ -25,9 +26,10 @@ function FormEntry() {
     // API call can be added here later.
 
     setFormData({
-      name: "",
-      email: "",
-      category: "",
+      company: "",
+      position: "",
+      status: "",
+      dateApplied: "",
       notes: "",
     });
   };
@@ -44,6 +46,7 @@ function FormEntry() {
             <label htmlFor="company">Company</label>
 
             <input
+              className="form-input"
               id="company"
               name="company"
               type="text"
@@ -58,6 +61,7 @@ function FormEntry() {
             <label htmlFor="position">Position</label>
 
             <input
+              className="form-input"
               id="position"
               name="position"
               type="text"
@@ -72,6 +76,7 @@ function FormEntry() {
             <label htmlFor="status">Status</label>
 
             <select
+              className="form-input"
               id="status"
               name="status"
               value={formData.status}
@@ -89,9 +94,10 @@ function FormEntry() {
             <label htmlFor="dateApplied">Date Applied</label>
 
             <input
+              className="form-input"
               id="dateApplied"
               name="dateApplied"
-              type="text"
+              type="date"
               value={formData.dateApplied}
               onChange={handleChange}
               placeholder="Enter date"
@@ -103,6 +109,7 @@ function FormEntry() {
             <label htmlFor="notes">Notes</label>
 
             <textarea
+              className="form-input"
               id="notes"
               name="notes"
               value={formData.notes}
