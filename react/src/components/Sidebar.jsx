@@ -1,9 +1,14 @@
+// Determine navigation item label, whether or not it is clickable, and url path
 const menuItems = [
   {
     label: "Dashboard",
+    active: true,
+    path: "/dashboard"
   },
   {
     label: "Calendar",
+    active: true,
+    path: "/calendar"
   },
   {
     label: "Notifications",
@@ -16,6 +21,7 @@ const menuItems = [
   },
 ];
 
+// Component function
 function Sidebar() {
   return (
     <aside className="sidebar">
@@ -26,7 +32,7 @@ function Sidebar() {
         {menuItems.map((item) => (
           <a
             key={item.label}
-            href="#"
+            href={item.path}
             className={`sidebar-link ${item.active ? "active" : ""}`}
           >
             <span className="sidebar-text">{item.label}</span>

@@ -1,3 +1,4 @@
+// Basic header component
 function Header() {
     return (
         <div className="page-header">

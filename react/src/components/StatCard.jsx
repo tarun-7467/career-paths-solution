@@ -1,3 +1,4 @@
+// StatCard component, use for analytics display in the future
 function StatCard({ title, value, change }) {
   return (
     <div className="stat-card">

@@ -1,6 +1,9 @@
+// Component imports
 import Sidebar from '../components/Sidebar.jsx'
 import FormEntry from '../components/FormEntry.jsx'
 import Header from '../components/Header.jsx'
+
+// Styling imports
 import '../stylesheets/Dashboard.css'
 
 function Dashboard() {

@@ -9,6 +9,7 @@ function FormEntry() {
     notes: "",
   });
 
+  // Change handling function
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -18,12 +19,11 @@ function FormEntry() {
     }));
   };
 
+  // Submission function, Django integration can be handled here later
   const handleSubmit = (event) => {
     event.preventDefault();
 
     console.log("Form submitted:", formData);
-
-    // API call can be added here later.
 
     setFormData({
       company: "",
@@ -34,6 +34,7 @@ function FormEntry() {
     });
   };
 
+  // Form output
   return (
     <section className="form-card">
       <div className="form-header">
@@ -42,6 +43,8 @@ function FormEntry() {
 
       <form onSubmit={handleSubmit}>
         <div className="form-grid">
+
+          {/* Company name form block, standard text input */}
           <div className="form-group">
             <label htmlFor="company">Company</label>
 
@@ -57,6 +60,7 @@ function FormEntry() {
             />
           </div>
 
+          {/* Positon form block, standard text input */}
           <div className="form-group">
             <label htmlFor="position">Position</label>
 
@@ -72,6 +76,7 @@ function FormEntry() {
             />
           </div>
 
+          {/* Status form block, uses drop down values for input */}
           <div className="form-group">
             <label htmlFor="status">Status</label>
 
@@ -90,6 +95,7 @@ function FormEntry() {
             </select>
           </div>
 
+          {/* Date form block, date data type input */}
           <div className="form-group">
             <label htmlFor="dateApplied">Date Applied</label>
 
@@ -105,6 +111,7 @@ function FormEntry() {
             />
           </div>
 
+          {/* Note form block, standard text type */}
           <div className="form-group full-width">
             <label htmlFor="notes">Notes</label>
 
@@ -120,6 +127,7 @@ function FormEntry() {
           </div>
         </div>
 
+        {/* Submission buttons */}
         <div className="form-actions">
           <button type="button" className="button secondary">
             Cancel
