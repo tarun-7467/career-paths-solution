@@ -118,3 +118,36 @@
     display: flex;
     justify-content: space-between;
 }
+
+/* Job applications table */
+.application-list {
+  margin-top: 24px;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.applications-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.applications-table th,
+.applications-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.applications-table th {
+  font-weight: 600;
+}
+
+.applications-table td:last-child {
+  white-space: nowrap;
+}
+
+.applications-table td:last-child .button {
+  margin-right: 8px;
+  cursor: pointer;
+}
