@@ -97,14 +97,6 @@ function Dashboard() {
                         <h2>Applications</h2>
                     </div>
 
-                    <FormEntry
-                        key={editingApplication?.job_id ?? 'new'}
-                        onAddApplication={handleAddApplication}
-                        onUpdateApplication={handleUpdateApplication}
-                        editingApplication={editingApplication}
-                        onCancelEdit={handleCancelEdit}
-                    />
-
                     <ApplicationList
                         applications={userApplications}
                         onSelect={setSelectedApplication}
@@ -150,6 +142,14 @@ function Dashboard() {
                             </button>
                         </section>
                     )}
+
+                    <FormEntry
+                        key={editingApplication?.job_id ?? 'new'}
+                        onAddApplication={handleAddApplication}
+                        onUpdateApplication={handleUpdateApplication}
+                        editingApplication={editingApplication}
+                        onCancelEdit={handleCancelEdit}
+                    />
                 </section>
             </main>
         </div>
