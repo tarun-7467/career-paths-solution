@@ -119,6 +119,7 @@
     justify-content: space-between;
 }
 
+<<<<<<< HEAD
 
 /* Dashboard calendar widget: card look matches .applications-panel */
 .calendar-widget {
@@ -144,4 +145,37 @@
 .calendar-widget .widget-toolbar-title {
   font-size: 18px;
   font-weight: 500;
+=======
+/* Job applications table */
+.application-list {
+  margin-top: 24px;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.applications-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.applications-table th,
+.applications-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.applications-table th {
+  font-weight: 600;
+}
+
+.applications-table td:last-child {
+  white-space: nowrap;
+}
+
+.applications-table td:last-child .button {
+  margin-right: 8px;
+  cursor: pointer;
+>>>>>>> 978f69690003783fcb009a1c551df0aef513540e
 }
