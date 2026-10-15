@@ -13,7 +13,9 @@
     ],
     "host_permissions": [
         "*://*.workday.com/*",
-        "*://*.workdayjobs.com/*"
+        "*://*.workdayjobs.com/*",
+        "*://*.myworkdayjobs.com/*",
+        "*://*.myworkday.com/*"
     ],
     "background": {
         "service_worker": "background.js"
@@ -26,7 +28,10 @@
         {
             "matches": [
                 "*://*.workday.com/*",
-                "*://*.workdayjobs.com/*"
+                "*://*.workdayjobs.com/*",
+                "*://*.myworkdayjobs.com/*",
+                "*://*.wd1.myworkdayjobs.com/*",
+                "*://*.wd3.myworkdayjobs.com/*"
             ],
             "js": [
                 "contentScript.js"
