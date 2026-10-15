@@ -1,13 +1,18 @@
 import { useState } from "react";
 
-function FormEntry() {
-  const [formData, setFormData] = useState({
-    company: "",
-    position: "",
-    status: "",
-    dateApplied: "",
-    notes: "",
-  });
+function FormEntry({
+  onAddApplication,
+  onUpdateApplication,
+  editingApplication,
+  onCancelEdit,
+}) {
+  const [formData, setFormData] = useState(() => ({
+      company: editingApplication?.company ?? "",
+      position: editingApplication?.position ?? "",
+      status: editingApplication?.status ?? "",
+      dateApplied: editingApplication?.date_applied ?? "",
+      notes: editingApplication?.notes ?? "",
+  }));
 
   // Change handling function
   const handleChange = (event) => {
@@ -19,19 +24,50 @@ function FormEntry() {
     }));
   };
 
-  // Submission function, Django integration can be handled here later
+  // Handle form submission for adding or updating applications
+  // Django integration will be added later
   const handleSubmit = (event) => {
-    event.preventDefault();
+      event.preventDefault();
 
-    console.log("Form submitted:", formData);
+      const applicationData = {
+          company: formData.company,
+          position: formData.position,
+          status: formData.status,
+          date_applied: formData.dateApplied,
+          notes: formData.notes,
+      };
 
-    setFormData({
-      company: "",
-      position: "",
-      status: "",
-      dateApplied: "",
-      notes: "",
-    });
+      if (editingApplication) {
+          // Update an existing application
+          onUpdateApplication(applicationData);
+      } else {
+          // Add a new application
+          onAddApplication(applicationData);
+      }
+
+      // Clear the form after submission
+      setFormData({
+          company: "",
+          position: "",
+          status: "",
+          dateApplied: "",
+          notes: "",
+      });
+
+      onCancelEdit();
+  };
+
+  // Cancel editing and clear the form
+  const handleCancel = () => {
+      setFormData({
+          company: "",
+          position: "",
+          status: "",
+          dateApplied: "",
+          notes: "",
+      });
+
+      onCancelEdit();
   };
 
   // Form output
@@ -89,9 +125,10 @@ function FormEntry() {
               required
             >
               <option value="">...</option>
-              <option value="pending">Pending</option>
-              <option value="interview">Interview</option>
-              <option value="declined">Declined</option>
+              <option value="Applied">Applied</option>
+              <option value="Interview">Interview</option>
+              <option value="Offer">Offer</option>
+              <option value="Rejected">Rejected</option>
             </select>
           </div>
 
@@ -129,12 +166,16 @@ function FormEntry() {
 
         {/* Submission buttons */}
         <div className="form-actions">
-          <button type="button" className="button secondary">
-            Cancel
+          <button
+              type="button"
+              className="button secondary"
+              onClick={handleCancel}
+          >
+              Cancel
           </button>
 
           <button type="submit" className="button primary">
-            Add Entry
+              {editingApplication ? "Save Changes" : "Add Entry"}
           </button>
         </div>
       </form>
