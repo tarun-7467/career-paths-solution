@@ -1,23 +1,26 @@
-let lastDetection = null;
+let lastByTab = {};
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg?.type === 'PAGE_DETECTION') {
-    const record = { ...msg.payload, tabId: sender.tab?.id, time: Date.now() };
-    lastDetection = record;
-    // persist so popup can read after service worker restarts
-    chrome.storage.local.set({ lastDetection: record });
-    return; // no async response needed here
-  }
-
-  if (msg?.type === 'GET_LAST_DETECTION') {
-    if (lastDetection) {
-      sendResponse(lastDetection);
-      return;
+    if (msg?.type === 'PAGE_DETECTION') {
+        const tabId = sender.tab?.id;
+        if (!tabId) return;
+        const record = { ...msg.payload, tabId, time: Date.now() };
+        lastByTab[tabId] = record;
+        chrome.storage.local.set({ lastByTab });
+        return;
     }
-    // async fallback to storage (service worker may have restarted)
-    chrome.storage.local.get('lastDetection', (res) => {
-      sendResponse(res.lastDetection || null);
-    });
-    return true; // keep message channel open for async sendResponse
-  }
+
+    if (msg?.type === 'GET_LAST_DETECTION') {
+        const tabId = msg.tabId;
+        if (tabId && lastByTab[tabId]) {
+            sendResponse(lastByTab[tabId]);
+            return;
+        }
+        // fallback if service worker restarted
+        chrome.storage.local.get('lastByTab', (res) => {
+            const map = res.lastByTab || {};
+            sendResponse(tabId ? map[tabId] || null : null);
+        });
+        return true; // declare async response
+    }
 });

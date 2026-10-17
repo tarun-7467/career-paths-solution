@@ -3,24 +3,16 @@
 
 <head>
     <meta charset="utf-8">
-    <style>
-        body {
-            font-family: Arial;
-            padding: 12px;
-            width: 260px
-        }
-
-        #status {
-            font-weight: 600
-        }
-    </style>
+    <link rel="stylesheet" href="popup.css">
 </head>
 
 <body>
-    <div>
-        <div id="status">Checking...</div>
-        <div id="title" style="margin-top:8px;color:#444;font-size:13px"></div>
-        <button id="toggleBtn" style="margin-top:12px">Disable</button>
+    <div id="app">
+        <div class="status-card">
+            <span class="badge">Career Paths</span>
+            <div id="status">Checking...</div>
+            <div id="title"></div>
+        </div>
     </div>
     <script src="popup.js"></script>
 </body>

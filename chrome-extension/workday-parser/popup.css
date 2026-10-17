@@ -1,0 +1,73 @@
+:root {
+    --bg: #f4f7fb;
+    --card: #ffffff;
+    --primary: #1f3a5f;
+    --primary-soft: #dfeaf7;
+    --text: #1d2433;
+    --muted: #637089;
+    --success: #2e7d5f;
+    --warning: #d97706;
+    --border: #e2e8f0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    width: 300px;
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+#app {
+    padding: 14px 16px;
+}
+
+.status-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 2px 8px rgba(31, 58, 95, 0.06);
+}
+
+#status {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.02em;
+}
+
+#status.supported {
+    color: var(--success);
+}
+
+#status.unsupported {
+    color: var(--warning);
+}
+
+#title {
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+    word-break: break-word;
+}
+
+.badge {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
