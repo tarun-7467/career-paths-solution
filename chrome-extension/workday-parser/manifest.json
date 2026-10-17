@@ -1,0 +1,43 @@
+{
+    "manifest_version": 3,
+    "name": "Workday Parser - Career Paths",
+    "version": "0.1.0",
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "icons/icon48.png"
+    },
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting",
+        "tabs"
+    ],
+    "host_permissions": [
+        "*://*.workday.com/*",
+        "*://*.workdayjobs.com/*",
+        "*://*.myworkdayjobs.com/*",
+        "*://*.myworkday.com/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "icons": {
+        "48": "icons/icon48.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.workday.com/*",
+                "*://*.workdayjobs.com/*",
+                "*://*.myworkdayjobs.com/*",
+                "*://*.wd1.myworkdayjobs.com/*",
+                "*://*.wd3.myworkdayjobs.com/*"
+            ],
+            "js": [
+                "contentScript.js"
+            ],
+            "run_at": "document_idle",
+            "all_frames": true
+        }
+    ]
+}
