@@ -119,6 +119,33 @@
     justify-content: space-between;
 }
 
+
+/* Dashboard calendar widget: card look matches .applications-panel */
+.calendar-widget {
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 11px;
+  background: #f8f8f8;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 18%);
+}
+
+/* Title on the left, link on the right */
+.calendar-widget .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.widget-link {
+  font-size: 11px;
+  color: #1e356d;
+}
+
+.calendar-widget .widget-toolbar-title {
+  font-size: 18px;
+  font-weight: 500;
+  
+}
 /* Job applications table */
 .application-list {
   margin-top: 24px;

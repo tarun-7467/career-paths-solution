@@ -8,7 +8,7 @@ export const jobApplications = [
     company: "Google",
     position: "Frontend Intern",
     status: "Applied",
-    date_applied: "2026-09-15",
+    date_applied: "2026-10-15",
     notes: "Referred by a friend"
   },
   {
@@ -17,7 +17,7 @@ export const jobApplications = [
     company: "Amazon",
     position: "Software Engineer",
     status: "Interview",
-    date_applied: "2026-09-11",
+    date_applied: "2026-10-11",
     notes: "Phone screen done"
   },
   {
@@ -26,7 +26,7 @@ export const jobApplications = [
     company: "Meta",
     position: "Data Analyst",
     status: "Offer",
-    date_applied: "2026-09-30",
+    date_applied: "2026-10-30",
     notes: "Waiting to negotiate"
   }
 ];
@@ -36,7 +36,7 @@ export const reminders = [
     reminder_id: 1,
     job_id: 2,
     reminder_name: "Amazon Interview",
-    reminder_date: "2026-09-25",
+    reminder_date: "2026-10-25",
     description: "Technical interview, prepare data structures",
     completed: false
   },

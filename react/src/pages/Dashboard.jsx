@@ -10,6 +10,9 @@ import ApplicationList from '../components/ApplicationList.jsx';
 // Mock data
 import { jobApplications } from './mockData.js';
 
+// Widget import for Calendar
+import CalendarWidget from '../components/CalendarWidget.jsx'
+
 // Styling imports
 import '../stylesheets/Dashboard.css';
 
@@ -92,6 +95,7 @@ function Dashboard() {
             <Sidebar />
 
             <main className="dashboard-content">
+                < CalendarWidget />
                 <section className="applications-panel">
                     <div className="panel-header">
                         <h2>Applications</h2>
