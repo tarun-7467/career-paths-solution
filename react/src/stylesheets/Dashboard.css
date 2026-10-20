@@ -131,47 +131,13 @@
     justify-content: space-between;
 }
 
-<<<<<<< HEAD
 /* Job applications table */
 .application-list {
   margin-top: 20px;
-=======
-
-/* Dashboard calendar widget: card look matches .applications-panel */
-.calendar-widget {
-  margin-bottom: 20px;
-  padding: 20px;
-  border-radius: 11px;
-  background: #f8f8f8;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 18%);
-}
-
-/* Title on the left, link on the right */
-.calendar-widget .panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.widget-link {
-  font-size: 11px;
-  color: #1e356d;
-}
-
-.calendar-widget .widget-toolbar-title {
-  font-size: 18px;
-  font-weight: 500;
-  
-}
-/* Job applications table */
-.application-list {
-  margin-top: 24px;
->>>>>>> origin/main
   width: 100%;
   overflow-x: auto;
 }
 
-<<<<<<< HEAD
 .application-list p {
   margin-bottom: 20px;
 }
@@ -184,19 +150,14 @@
   font-weight: 500;
 }
 
-=======
->>>>>>> origin/main
 .applications-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
   font-size: 13px;
-<<<<<<< HEAD
   margin-bottom: 20px;
   background: white;
   border-top: 1px solid #c9c9c9;
-=======
->>>>>>> origin/main
 }
 
 .applications-table th,
@@ -216,7 +177,6 @@
 .applications-table td:last-child .button {
   margin-right: 8px;
   cursor: pointer;
-<<<<<<< HEAD
 }
 
 .application-details {
@@ -289,6 +249,64 @@
     max-height: 1000px;
     transform: translateY(0);
     pointer-events: auto;
-=======
->>>>>>> origin/main
+}
+
+
+/* Dashboard calendar widget: card look matches .applications-panel */
+.calendar-widget {
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 11px;
+  background: #f8f8f8;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 18%);
+}
+
+/* Title on the left, link on the right */
+.calendar-widget .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.widget-link {
+  font-size: 11px;
+  color: #1e356d;
+}
+
+.calendar-widget .widget-toolbar-title {
+  font-size: 18px;
+  font-weight: 500;
+  
+}
+/* Job applications table */
+.application-list {
+  margin-top: 24px;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.applications-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.applications-table th,
+.applications-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.applications-table th {
+  font-weight: 600;
+}
+
+.applications-table td:last-child {
+  white-space: nowrap;
+}
+
+.applications-table td:last-child .button {
+  margin-right: 8px;
+  cursor: pointer;
 }
