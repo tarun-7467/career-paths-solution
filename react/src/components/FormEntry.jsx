@@ -1,18 +1,14 @@
 import { useState } from "react";
 
-function FormEntry({
-  onAddApplication,
-  onUpdateApplication,
-  editingApplication,
-  onCancelEdit,
-}) {
-  const [formData, setFormData] = useState(() => ({
-      company: editingApplication?.company ?? "",
-      position: editingApplication?.position ?? "",
-      status: editingApplication?.status ?? "",
-      dateApplied: editingApplication?.date_applied ?? "",
-      notes: editingApplication?.notes ?? "",
-  }));
+function FormEntry({ editingApplication = null, onCancel = () => {} }) {
+  const [formData, setFormData] = useState({
+    company: "",
+    position: "",
+    status: "",
+    dateApplied: "",
+    notes: "",
+    reminderDate: "",
+  });
 
   // Change handling function
   const handleChange = (event) => {
@@ -22,6 +18,19 @@ function FormEntry({
       ...previous,
       [name]: value,
     }));
+  };
+
+  // Clear the form and tell the parent we cancelled
+  const handleCancel = () => {
+    setFormData({
+      company: "",
+      position: "",
+      status: "",
+      dateApplied: "",
+      notes: "",
+      reminderDate: "",
+    });
+    onCancel();
   };
 
   // Handle form submission for adding or updating applications
@@ -37,37 +46,19 @@ function FormEntry({
           notes: formData.notes,
       };
 
-      if (editingApplication) {
-          // Update an existing application
-          onUpdateApplication(applicationData);
-      } else {
-          // Add a new application
-          onAddApplication(applicationData);
-      }
+// Save the entry in the browser so other pages can read it
+const saved = JSON.parse(localStorage.getItem("applications") || "[]");
+const newEntry = { id: Date.now(), ...formData };
+localStorage.setItem("applications", JSON.stringify([...saved, newEntry]));
 
-      // Clear the form after submission
-      setFormData({
-          company: "",
-          position: "",
-          status: "",
-          dateApplied: "",
-          notes: "",
-      });
-
-      onCancelEdit();
-  };
-
-  // Cancel editing and clear the form
-  const handleCancel = () => {
-      setFormData({
-          company: "",
-          position: "",
-          status: "",
-          dateApplied: "",
-          notes: "",
-      });
-
-      onCancelEdit();
+    setFormData({
+      company: "",
+      position: "",
+      status: "",
+      dateApplied: "",
+      notes: "",
+      reminderDate: "",
+    });
   };
 
   // Form output
@@ -160,6 +151,18 @@ function FormEntry({
               onChange={handleChange}
               placeholder="Add notes"
               rows="4"
+            />
+          </div>
+               <div className="form-group full-width">
+            <label htmlFor="reminderDate">Remind me on</label>
+
+            <input
+              className="form-input"
+              type="datetime-local"
+              id="reminderDate"
+              name="reminderDate"
+              value={formData.reminderDate}
+              onChange={handleChange}
             />
           </div>
         </div>
