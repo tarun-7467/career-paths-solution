@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function FormEntry({
   onAddApplication,
@@ -13,6 +13,21 @@ function FormEntry({
       dateApplied: editingApplication?.date_applied ?? "",
       notes: editingApplication?.notes ?? "",
   }));
+
+  useEffect(() => {
+    if (editingApplication) {
+      setFormData({
+        company: editingApplication.company ?? "",
+        position: editingApplication.position ?? "",
+        status: editingApplication.status ?? "",
+        dateApplied: editingApplication.date_applied ?? "",
+        notes: editingApplication.notes ?? "",
+      });
+    }
+  }, [editingApplication]);
+
+  // Boolean for Application form use state
+  const [applicationForm, showApplicationForm] = useState(null);
 
   // Change handling function
   const handleChange = (event) => {
@@ -67,14 +82,34 @@ function FormEntry({
           notes: "",
       });
 
+      showApplicationForm(null);
       onCancelEdit();
   };
 
   // Form output
   return (
     <section className="form-card">
+      {/* View application entry button */}  
+      <button
+        type="button"
+        className={`button secondary ${
+          applicationForm || editingApplication ? "button-hidden" : ""
+        }`}
+        onClick={() => showApplicationForm({...applicationForm})}
+      >
+        Create a new application entry
+      </button>
+
+      {/* Display wrapper on editing or creating new application */}
+      <div
+        className={`form-container ${
+          applicationForm || editingApplication ? "form-open" : ""
+        }`}
+        aria-hidden={!(applicationForm || editingApplication)}
+        inert={!(applicationForm || editingApplication)}
+      >
       <div className="form-header">
-        <p>Create a new application entry.</p>
+        <h2>Create or modify your application</h2>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -179,6 +214,7 @@ function FormEntry({
           </button>
         </div>
       </form>
+      </div>
     </section>
   );
 }

@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Component imports
 import Sidebar from '../components/Sidebar.jsx';
@@ -98,16 +98,8 @@ function Dashboard() {
                 < CalendarWidget />
                 <section className="applications-panel">
                     <div className="panel-header">
-                        <h2>Applications</h2>
+                        <h2>My Applications</h2>
                     </div>
-
-                    <FormEntry
-                        key={editingApplication?.job_id ?? 'new'}
-                        onAddApplication={handleAddApplication}
-                        onUpdateApplication={handleUpdateApplication}
-                        editingApplication={editingApplication}
-                        onCancelEdit={handleCancelEdit}
-                    />
 
                     <ApplicationList
                         applications={userApplications}
@@ -116,33 +108,39 @@ function Dashboard() {
                         onEdit={setEditingApplication}
                     />
 
-                    {selectedApplication && (
+                    <div
+                    className={`application-details-container ${
+                    selectedApplication ? "details-open" : ""
+                    }`}
+                    aria-hidden={!(selectedApplication)}
+                    inert={!(selectedApplication)}
+                    >
                         <section className="application-details">
                             <h3>Application Details</h3>
 
                             <p>
                                 <strong>Company:</strong>{' '}
-                                {selectedApplication.company}
+                                {selectedApplication?.company}
                             </p>
 
                             <p>
                                 <strong>Position:</strong>{' '}
-                                {selectedApplication.position}
+                                {selectedApplication?.position}
                             </p>
 
                             <p>
                                 <strong>Status:</strong>{' '}
-                                {selectedApplication.status}
+                                {selectedApplication?.status}
                             </p>
 
                             <p>
                                 <strong>Date Applied:</strong>{' '}
-                                {selectedApplication.date_applied}
+                                {selectedApplication?.date_applied}
                             </p>
 
                             <p>
                                 <strong>Notes:</strong>{' '}
-                                {selectedApplication.notes}
+                                {selectedApplication?.notes}
                             </p>
 
                             <button
@@ -153,7 +151,15 @@ function Dashboard() {
                                 Close Details
                             </button>
                         </section>
-                    )}
+                    </div>
+                    
+
+                    <FormEntry
+                        onAddApplication={handleAddApplication}
+                        onUpdateApplication={handleUpdateApplication}
+                        editingApplication={editingApplication}
+                        onCancelEdit={handleCancelEdit}
+                    />
                 </section>
             </main>
         </div>

@@ -2,7 +2,6 @@
 function ApplicationList({ applications, onSelect, onDelete, onEdit }) {
   return (
     <section className="application-list">
-      <h2>My Job Applications</h2>
 
       {applications.length === 0 ? (
         <p>No applications found.</p>
