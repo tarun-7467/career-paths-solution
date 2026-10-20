@@ -93,7 +93,7 @@ function FormEntry({
       <button
         type="button"
         className={`button secondary ${
-          applicationForm ? "button-hidden" : ""
+          applicationForm || editingApplication ? "button-hidden" : ""
         }`}
         onClick={() => showApplicationForm({...applicationForm})}
       >
@@ -160,10 +160,6 @@ function FormEntry({
               required
             >
               <option value="">...</option>
-              <option value="Applied">Applied</option>
-              <option value="Interview">Interview</option>
-              <option value="Offer">Offer</option>
-              <option value="Rejected">Rejected</option>
               <option value="Applied">Applied</option>
               <option value="Interview">Interview</option>
               <option value="Offer">Offer</option>
