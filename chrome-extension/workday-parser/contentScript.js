@@ -18,6 +18,7 @@
         const metaTitle = document.querySelector('meta[property="og:title"]')?.content;
         return metaTitle || document.title || '';
     }
+
     function detect() {
         try {
             chrome.storage.local.get({ enabled: true }, (res) => {
@@ -27,15 +28,23 @@
                     return;
                 }
 
+                const details = typeof window.extractJobDetails === 'function' ? window.extractJobDetails() : {};
                 const bodyText = (document.body && document.body.innerText) || '';
-                const title = getTitle();
+                const title = details.job_title || getTitle();
                 const markers = /requisition|jobPosting|apply|job|requisitionId|JR-\d{4,}/i;
                 const hasJobMarkers = markers.test(bodyText) ||
                     Boolean(document.querySelector('[data-automation-id]')) ||
                     Boolean(document.querySelector('a[href*="/recruiting/"]'));
                 const supported = isWorkdayHost() || hasJobMarkers;
-                const requisitionId = extractRequisitionId(bodyText);
-                const payload = { supported, title, url: location.href, requisitionId, detectedAt: Date.now() };
+                const requisitionId = details.requisition_id || extractRequisitionId(bodyText);
+                const payload = {
+                    supported,
+                    title,
+                    url: location.href,
+                    requisitionId,
+                    detectedAt: Date.now(),
+                    ...details
+                };
                 LOG('detect =>', payload);
                 chrome.runtime.sendMessage({ type: 'PAGE_DETECTION', payload });
             });
