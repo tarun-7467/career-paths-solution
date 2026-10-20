@@ -34,6 +34,7 @@
                 "*://*.wd3.myworkdayjobs.com/*"
             ],
             "js": [
+                "parser.js",
                 "contentScript.js"
             ],
             "run_at": "document_idle",
