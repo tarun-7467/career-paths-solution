@@ -25,8 +25,6 @@ const menuItems = [
 function Sidebar() {
   return (
     <aside className="sidebar">
-      <div className="sidebar-header">
-      </div>
 
       <nav className="sidebar-nav">
         {menuItems.map((item) => (
