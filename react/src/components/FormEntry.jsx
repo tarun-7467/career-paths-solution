@@ -13,6 +13,7 @@ function FormEntry({
       dateApplied: editingApplication?.date_applied ?? "",
       notes: editingApplication?.notes ?? "",
   }));
+<<<<<<< HEAD
 
   useEffect(() => {
     if (editingApplication) {
@@ -28,6 +29,8 @@ function FormEntry({
 
   // Boolean for Application form use state
   const [applicationForm, showApplicationForm] = useState(null);
+=======
+>>>>>>> origin/main
 
   // Change handling function
   const handleChange = (event) => {
@@ -82,7 +85,10 @@ function FormEntry({
           notes: "",
       });
 
+<<<<<<< HEAD
       showApplicationForm(null);
+=======
+>>>>>>> origin/main
       onCancelEdit();
   };
 

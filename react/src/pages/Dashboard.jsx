@@ -1,5 +1,9 @@
 
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
+=======
+import { useState } from 'react';
+>>>>>>> origin/main
 
 // Component imports
 import Sidebar from '../components/Sidebar.jsx';
@@ -9,6 +13,12 @@ import ApplicationList from '../components/ApplicationList.jsx';
 
 // Mock data
 import { jobApplications } from './mockData.js';
+<<<<<<< HEAD
+=======
+
+// Widget import for Calendar
+import CalendarWidget from '../components/CalendarWidget.jsx'
+>>>>>>> origin/main
 
 // Styling imports
 import '../stylesheets/Dashboard.css';
@@ -92,11 +102,23 @@ function Dashboard() {
             <Sidebar />
 
             <main className="dashboard-content">
+                < CalendarWidget />
                 <section className="applications-panel">
                     <div className="panel-header">
                         <h2>My Applications</h2>
                     </div>
 
+<<<<<<< HEAD
+=======
+                    <FormEntry
+                        key={editingApplication?.job_id ?? 'new'}
+                        onAddApplication={handleAddApplication}
+                        onUpdateApplication={handleUpdateApplication}
+                        editingApplication={editingApplication}
+                        onCancelEdit={handleCancelEdit}
+                    />
+
+>>>>>>> origin/main
                     <ApplicationList
                         applications={userApplications}
                         onSelect={setSelectedApplication}
@@ -104,6 +126,7 @@ function Dashboard() {
                         onEdit={setEditingApplication}
                     />
 
+<<<<<<< HEAD
                     <div
                     className={`application-details-container ${
                     selectedApplication ? "details-open" : ""
@@ -111,32 +134,55 @@ function Dashboard() {
                     aria-hidden={!(selectedApplication)}
                     inert={!(selectedApplication)}
                     >
+=======
+                    {selectedApplication && (
+>>>>>>> origin/main
                         <section className="application-details">
                             <h3>Application Details</h3>
 
                             <p>
                                 <strong>Company:</strong>{' '}
+<<<<<<< HEAD
                                 {selectedApplication?.company}
+=======
+                                {selectedApplication.company}
+>>>>>>> origin/main
                             </p>
 
                             <p>
                                 <strong>Position:</strong>{' '}
+<<<<<<< HEAD
                                 {selectedApplication?.position}
+=======
+                                {selectedApplication.position}
+>>>>>>> origin/main
                             </p>
 
                             <p>
                                 <strong>Status:</strong>{' '}
+<<<<<<< HEAD
                                 {selectedApplication?.status}
+=======
+                                {selectedApplication.status}
+>>>>>>> origin/main
                             </p>
 
                             <p>
                                 <strong>Date Applied:</strong>{' '}
+<<<<<<< HEAD
                                 {selectedApplication?.date_applied}
+=======
+                                {selectedApplication.date_applied}
+>>>>>>> origin/main
                             </p>
 
                             <p>
                                 <strong>Notes:</strong>{' '}
+<<<<<<< HEAD
                                 {selectedApplication?.notes}
+=======
+                                {selectedApplication.notes}
+>>>>>>> origin/main
                             </p>
 
                             <button
@@ -147,6 +193,7 @@ function Dashboard() {
                                 Close Details
                             </button>
                         </section>
+<<<<<<< HEAD
                     </div>
                     
 
@@ -156,6 +203,9 @@ function Dashboard() {
                         editingApplication={editingApplication}
                         onCancelEdit={handleCancelEdit}
                     />
+=======
+                    )}
+>>>>>>> origin/main
                 </section>
             </main>
         </div>
