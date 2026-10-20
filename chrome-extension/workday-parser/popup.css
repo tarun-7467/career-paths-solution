@@ -15,7 +15,7 @@
 }
 
 body {
-    width: 300px;
+    width: 320px;
     margin: 0;
     padding: 0;
     background: var(--bg);
@@ -35,12 +35,24 @@ body {
     box-shadow: 0 2px 8px rgba(31, 58, 95, 0.06);
 }
 
+.badge {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
 #status {
-    margin: 0;
+    margin: 0 0 10px;
     font-size: 14px;
     font-weight: 700;
     color: var(--primary);
-    letter-spacing: 0.02em;
 }
 
 #status.supported {
@@ -59,15 +71,48 @@ body {
     word-break: break-word;
 }
 
-.badge {
-    display: inline-block;
-    margin-bottom: 10px;
-    padding: 5px 8px;
-    border-radius: 999px;
-    background: var(--primary-soft);
-    color: var(--primary);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+#question {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 8px 0 12px;
+    color: var(--text);
+}
+
+#actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+button {
+    flex: 1;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button.primary {
+    background: var(--primary);
+    color: white;
+}
+
+button.secondary {
+    background: #eef2f7;
+    color: var(--text);
+}
+
+#details {
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+    white-space: pre-line;
+}
+
+.hidden {
+    display: none;
 }
