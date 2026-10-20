@@ -14,6 +14,13 @@ CREATE TABLE "job_applications" (
   "status" varchar NOT NULL,
   "date_applied" date,
   "notes" text,
+  "location" varchar(255),
+  "requisition_id" varchar(100),
+  "employment_type" varchar(100),
+  "work_mode" varchar(50),
+  "posted_date" varchar(100),
+  "job_url" text,
+  "job_description" text,
   "created_at" timestamptz DEFAULT (now())
 );
 
