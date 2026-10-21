@@ -27,6 +27,14 @@ class JobApplication(models.Model):
     status = models.CharField(max_length=255)
     date_applied = models.DateField(null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
+    # Additional job details from job postings and Chrome Extension
+    location = models.CharField(max_length=255, null=True, blank=True)
+    requisition_id = models.CharField(max_length=100, null=True, blank=True)
+    employment_type = models.CharField(max_length=100, null=True, blank=True)
+    work_mode = models.CharField(max_length=50, null=True, blank=True)
+    posted_date = models.CharField(max_length=100, null=True, blank=True)
+    job_url = models.TextField(null=True, blank=True)
+    job_description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:

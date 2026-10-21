@@ -1,5 +1,8 @@
+
 // Component imports
+
 import Header from '../components/Header.jsx'
+<<<<<<< HEAD
 
 // Plugin imports
 import FullCalendar from '@fullcalendar/react';
@@ -64,23 +67,16 @@ function buildCalendarEvents() {
   ];
 }
 
+=======
+import CalendarView from '../components/CalendarView.jsx' // // the calendar itself, shared with the dashboard widget
+// The full Calendar page 
+>>>>>>> 5cd28b544437cf6f211ecb8ba3c83193e4457268
 function Calendar() {
-  const events = buildCalendarEvents();
-
   return (
     <div className="calendar-page">
       <Header />
       <h1>Career Paths Solution</h1>
-      <FullCalendar
-        plugins={[themePlugin, dayGridPlugin]}
-        initialView="dayGridMonth"
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth'
-        }}
-        events={events}
-      />
+      <CalendarView />
     </div>
   );
 }
