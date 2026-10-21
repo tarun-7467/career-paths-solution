@@ -195,7 +195,8 @@ function Dashboard() {
             <Sidebar />
 
             <main className="dashboard-content">
-                <CalendarWidget />
+                
+                <CalendarWidget applications={userApplications} />
                 <NotificationsWidget />
                 <section className="applications-panel">
                     <div className="panel-header">
