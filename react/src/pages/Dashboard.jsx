@@ -10,6 +10,8 @@ import ApplicationList from '../components/ApplicationList.jsx';
 // Widget import for Calendar
 import CalendarWidget from '../components/CalendarWidget.jsx'
 
+import NotificationsWidget from '../components/NotificationsWidget.jsx'
+
 // Styling imports
 import '../stylesheets/Dashboard.css';
 
@@ -193,7 +195,8 @@ function Dashboard() {
             <Sidebar />
 
             <main className="dashboard-content">
-                < CalendarWidget />
+                <CalendarWidget />
+                <NotificationsWidget />
                 <section className="applications-panel">
                     <div className="panel-header">
                         <h2>My Applications</h2>
