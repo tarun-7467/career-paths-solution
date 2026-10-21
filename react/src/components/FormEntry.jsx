@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 function FormEntry({
   onAddApplication,
@@ -13,18 +13,6 @@ function FormEntry({
       dateApplied: editingApplication?.date_applied ?? "",
       notes: editingApplication?.notes ?? "",
   }));
-
-  useEffect(() => {
-    if (editingApplication) {
-      setFormData({
-        company: editingApplication.company ?? "",
-        position: editingApplication.position ?? "",
-        status: editingApplication.status ?? "",
-        dateApplied: editingApplication.date_applied ?? "",
-        notes: editingApplication.notes ?? "",
-      });
-    }
-  }, [editingApplication]);
 
   // Boolean for Application form use state
   const [applicationForm, showApplicationForm] = useState(null);
@@ -41,7 +29,7 @@ function FormEntry({
 
   // Handle form submission for adding or updating applications
   // Django integration will be added later
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
       event.preventDefault();
 
       const applicationData = {
@@ -52,12 +40,13 @@ function FormEntry({
           notes: formData.notes,
       };
 
-      if (editingApplication) {
-          // Update an existing application
-          onUpdateApplication(applicationData);
-      } else {
-          // Add a new application
-          onAddApplication(applicationData);
+      const success = editingApplication
+          ? await onUpdateApplication(applicationData)
+          : await onAddApplication(applicationData);
+
+      if (!success) {
+          alert("Failed to save application. Please try again.");
+          return;
       }
 
       // Clear the form after submission
@@ -89,7 +78,7 @@ function FormEntry({
   // Form output
   return (
     <section className="form-card">
-      {/* View application entry button */}  
+      {/* View application entry button */}
       <button
         type="button"
         className={`button secondary ${

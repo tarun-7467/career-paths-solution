@@ -47,14 +47,10 @@ function ApplicationList({ applications, onSelect, onDelete, onEdit }) {
                   <button
                     type="button"
                     className="button secondary"
-                    onClick={() => {
-                        if (window.confirm("Are you sure you want to delete this application?")) {
-                        onDelete(application.job_id);
-                        }
-                    }}
-                    >
+                    onClick={() => onDelete(application.job_id)}
+                  >
                     Delete
-                    </button>
+                  </button>
                 </td>
               </tr>
             ))}
