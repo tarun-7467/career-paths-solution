@@ -92,7 +92,7 @@ function NotificationsView() {
       <div>Reminder: {formatDate(item.reminderDate)}</div>
       {item.notes && <div>Notes: {item.notes}</div>}
       {item.canDelete && (
-        <button type="button" onClick={() => handleDeleteReminder(item.rawId)}>
+        <button class="button secondary" type="button" onClick={() => handleDeleteReminder(item.rawId)}>
           Delete
         </button>
       )}
@@ -102,27 +102,8 @@ function NotificationsView() {
   return (
     <div className="notifications">
 
-      <h2>Add a reminder</h2>
-      <form onSubmit={handleAddReminder}>
-        <input
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Reminder (e.g. Follow up with Meta)"
-          required
-        />
-        <input
-          type="datetime-local"
-          name="reminderDate"
-          value={formData.reminderDate}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Add Reminder</button>
-      </form>
-
-      <h2>Due now ({dueReminders.length})</h2>
+    <div className="add-reminder">
+    <h2>Due now ({dueReminders.length})</h2>
       {dueReminders.length === 0 ? (
         <p>Nothing is due right now.</p>
       ) : (
@@ -139,6 +120,30 @@ function NotificationsView() {
           {upcomingReminders.map((item) => renderReminder(item, false))}
         </ul>
       )}
+      </div>
+
+      <h2>Add a reminder</h2>
+      <form onSubmit={handleAddReminder}>
+        <label>Reminder label</label>
+        <input class="form-input"
+          type="text"
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          placeholder="Reminder (e.g. Follow up with Meta)"
+          required
+        />
+        <label>Reminder date</label>
+        <input class="form-input"
+          type="datetime-local"
+          name="reminderDate"
+          value={formData.reminderDate}
+          onChange={handleChange}
+          required
+        />
+        <button class="button secondary" type="submit">Add Reminder</button>
+      </form>
+
     </div>
   );
 }

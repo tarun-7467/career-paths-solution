@@ -299,3 +299,12 @@
   color: #111827;
   font-weight: 500;
 }
+
+.notifications {
+  font-size: 12px;
+}
+
+.add-reminder {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #c9c9c9;
+}
