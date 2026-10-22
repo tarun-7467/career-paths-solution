@@ -21,6 +21,7 @@ function Notifications() {
 
   // STATE 3: what the user is typing in the add-reminder form
   const [formData, setFormData] = useState({ title: '', reminderDate: '' });
+  
 
   // Save the reminders list every time it changes
   useEffect(() => {
