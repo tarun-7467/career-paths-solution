@@ -265,7 +265,6 @@ function Dashboard() {
 
 
                     <FormEntry
-                      key={editingApplication?.job_id ?? "new"}
                       onAddApplication={handleAddApplication}
                       onUpdateApplication={handleUpdateApplication}
                       editingApplication={editingApplication}
