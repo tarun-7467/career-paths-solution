@@ -186,6 +186,7 @@ function FormEntry({
               rows="4"
             />
           </div>
+
         </div>
 
         {/* Submission buttons */}
