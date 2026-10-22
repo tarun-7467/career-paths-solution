@@ -92,7 +92,7 @@ function NotificationsView() {
       <div>Reminder: {formatDate(item.reminderDate)}</div>
       {item.notes && <div>Notes: {item.notes}</div>}
       {item.canDelete && (
-        <button class="button secondary" type="button" onClick={() => handleDeleteReminder(item.rawId)}>
+        <button className="button secondary" type="button" onClick={() => handleDeleteReminder(item.rawId)}>
           Delete
         </button>
       )}
@@ -125,7 +125,7 @@ function NotificationsView() {
       <h2>Add a reminder</h2>
       <form onSubmit={handleAddReminder}>
         <label>Reminder label</label>
-        <input class="form-input"
+        <input className="form-input"
           type="text"
           name="title"
           value={formData.title}
@@ -134,14 +134,14 @@ function NotificationsView() {
           required
         />
         <label>Reminder date</label>
-        <input class="form-input"
+        <input className="form-input"
           type="datetime-local"
           name="reminderDate"
           value={formData.reminderDate}
           onChange={handleChange}
           required
         />
-        <button class="button secondary" type="submit">Add Reminder</button>
+        <button className="button secondary" type="submit">Add Reminder</button>
       </form>
 
     </div>
