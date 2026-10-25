@@ -12,6 +12,8 @@ const menuItems = [
   },
   {
     label: "Notifications",
+    active: true,
+    path: "/notifications",
   },
   {
     label: "Account",

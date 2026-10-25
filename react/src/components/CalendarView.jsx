@@ -12,9 +12,9 @@ import '@fullcalendar/react/themes/classic/palette.css';
 // Mock data imports
 import { jobApplications, reminders } from '../pages/mockData';
 
-function buildCalendarEvents() {
+function buildCalendarEvents(applications) {
   // Turn each job application into a calendar event
-  const applicationEvents = jobApplications.map((job) => ({
+  const applicationEvents = applications.map((job) => ({
     title: `Applied: ${job.company} (${job.position})`,
     date: job.date_applied,
     color: '#57f442' // green for applications
@@ -32,8 +32,8 @@ function buildCalendarEvents() {
 }
 
 // compact = true is used by the dashboard widget
-function CalendarView({ compact = false }) {
-  const events = buildCalendarEvents();
+function CalendarView({ compact = false, applications = jobApplications }) {
+  const events = buildCalendarEvents(applications);
 
   return (
     <FullCalendar
