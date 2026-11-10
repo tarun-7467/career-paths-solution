@@ -1,6 +1,8 @@
-   import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+
 // Component imports
 import Header from '../components/Header.jsx'
+import Sidebar from '../components/Sidebar.jsx'
 
 // Read a list from the browser's saved data
 function loadList(key) {
@@ -20,7 +22,9 @@ function Notifications() {
 
   // STATE 3: what the user is typing in the add-reminder form
   const [formData, setFormData] = useState({ title: '', reminderDate: '' });
-  
+
+  // STATE 4: validation error shown under the form
+  const [error, setError] = useState('');
 
   // Save the reminders list every time it changes
   useEffect(() => {
@@ -33,14 +37,27 @@ function Notifications() {
     setFormData((previous) => ({ ...previous, [name]: value }));
   };
 
-  // HANDLER: add a new reminder
+  // HANDLER: validate and add a new reminder
   const handleAddReminder = (event) => {
     event.preventDefault();
-    if (!formData.title || !formData.reminderDate) return;
 
-    const newReminder = { id: Date.now(), ...formData };
+    if (!formData.title.trim()) {
+      setError('Please enter a title for your reminder.');
+      return;
+    }
+    if (!formData.reminderDate) {
+      setError('Please choose a date and time.');
+      return;
+    }
+
+    const newReminder = {
+      id: Date.now(),
+      title: formData.title.trim(),
+      reminderDate: formData.reminderDate
+    };
     setReminders((previous) => [...previous, newReminder]);
     setFormData({ title: '', reminderDate: '' }); // clear the form
+    setError(''); // clear any old error
   };
 
   // HANDLER: delete a reminder by its id
@@ -101,47 +118,62 @@ function Notifications() {
   );
 
   return (
-    <div className="notifications-page">
+    <div className="dashboard">
       <Header />
-      <h1>Notifications</h1>
+      <Sidebar />
+      <main className="dashboard-content">
+        <h1>Notifications</h1>
 
-      <h2>Add a reminder</h2>
-      <form onSubmit={handleAddReminder}>
-        <input
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Reminder (e.g. Follow up with Meta)"
-          required
-        />
-        <input
-          type="datetime-local"
-          name="reminderDate"
-          value={formData.reminderDate}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Add Reminder</button>
-      </form>
+        <h2>Add a reminder</h2>
+        <form onSubmit={handleAddReminder} noValidate>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="Reminder (e.g. Follow up with Meta)"
+            aria-invalid={!!error && !formData.title.trim()}
+          />
+          <input
+            type="datetime-local"
+            name="reminderDate"
+            value={formData.reminderDate}
+            onChange={handleChange}
+            aria-invalid={!!error && !formData.reminderDate}
+          />
+          <button type="submit">Add Reminder</button>
+          {error && (
+            <p role="alert" style={{ color: '#b00020' }}>{error}</p>
+          )}
+        </form>
 
-      <h2>Due now ({dueReminders.length})</h2>
-      {dueReminders.length === 0 ? (
-        <p>Nothing is due right now.</p>
-      ) : (
-        <ul style={{ padding: 0 }}>
-          {dueReminders.map((item) => renderReminder(item, true))}
-        </ul>
-      )}
+        {allReminders.length === 0 ? (
+          <div className="empty-state">
+            <p><strong>No reminders yet</strong></p>
+            <p>Enter a title and a date/time above, then click "Add Reminder" to create your first one.</p>
+          </div>
+        ) : (
+          <>
+            <h2>Due now ({dueReminders.length})</h2>
+            {dueReminders.length === 0 ? (
+              <p>Nothing is due right now.</p>
+            ) : (
+              <ul style={{ padding: 0 }}>
+                {dueReminders.map((item) => renderReminder(item, true))}
+              </ul>
+            )}
 
-      <h2>Upcoming ({upcomingReminders.length})</h2>
-      {upcomingReminders.length === 0 ? (
-        <p>No upcoming reminders.</p>
-      ) : (
-        <ul style={{ padding: 0 }}>
-          {upcomingReminders.map((item) => renderReminder(item, false))}
-        </ul>
-      )}
+            <h2>Upcoming ({upcomingReminders.length})</h2>
+            {upcomingReminders.length === 0 ? (
+              <p>No upcoming reminders.</p>
+            ) : (
+              <ul style={{ padding: 0 }}>
+                {upcomingReminders.map((item) => renderReminder(item, false))}
+              </ul>
+            )}
+          </>
+        )}
+      </main>
     </div>
   );
 }
