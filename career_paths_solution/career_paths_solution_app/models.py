@@ -35,6 +35,7 @@ class JobApplication(models.Model):
     posted_date = models.CharField(max_length=100, null=True, blank=True)
     job_url = models.TextField(null=True, blank=True)
     job_description = models.TextField(null=True, blank=True)
+    stable_job_key = models.CharField(max_length=64, null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
