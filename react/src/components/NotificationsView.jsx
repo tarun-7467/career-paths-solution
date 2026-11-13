@@ -1,8 +1,7 @@
-import { useState , useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import '../stylesheets/Dashboard.css';
 
-// Read a list from the browser's saved data
 function loadList(key) {
   try {
     return JSON.parse(localStorage.getItem(key) || '[]');
@@ -12,42 +11,78 @@ function loadList(key) {
 }
 
 function NotificationsView() {
-  // STATE 1: reminders added on this page (saved under "reminders")
-  const [reminders, setReminders] = useState(() => loadList('reminders'));
+  const currentUserId = 1;
 
-  // STATE 2: applications saved by the form (only read, never changed here)
+  const [reminders, setReminders] = useState([]);
+  const [jobs, setJobs] = useState([]);
   const [applications] = useState(() => loadList('applications'));
+  const [formData, setFormData] = useState({ title: '', reminderDate: '', jobId: '' });
 
-  // STATE 3: what the user is typing in the add-reminder form
-  const [formData, setFormData] = useState({ title: '', reminderDate: '' });
-
-  // Save the reminders list every time it changes
+  // Load jobs and reminders from Django when the page opens
   useEffect(() => {
-    localStorage.setItem('reminders', JSON.stringify(reminders));
-  }, [reminders]);
+    const loadData = async () => {
+      try {
+        const [jobsResponse, remindersResponse] = await Promise.all([
+          fetch('/api/job-applications/'),
+          fetch('/api/reminders/'),
+        ]);
+        if (!jobsResponse.ok || !remindersResponse.ok) {
+          throw new Error('Request failed');
+        }
+        const allJobs = await jobsResponse.json();
+        const allReminders = await remindersResponse.json();
 
-  // HANDLER: update the form as the user types
+        const myJobs = allJobs.filter((job) => job.user === currentUserId);
+        const myJobIds = myJobs.map((job) => job.job_id);
+        setJobs(myJobs);
+        setReminders(allReminders.filter((r) => myJobIds.includes(r.job)));
+      } catch (error) {
+        console.error('Failed to load reminders:', error);
+      }
+    };
+    loadData();
+  }, []);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((previous) => ({ ...previous, [name]: value }));
   };
 
-  // HANDLER: add a new reminder
-  const handleAddReminder = (event) => {
+  // Add a reminder (saved in the database)
+  const handleAddReminder = async (event) => {
     event.preventDefault();
-    if (!formData.title || !formData.reminderDate) return;
+    if (!formData.title || !formData.reminderDate || !formData.jobId) return;
 
-    const newReminder = { id: Date.now(), ...formData };
-    setReminders((previous) => [...previous, newReminder]);
-    setFormData({ title: '', reminderDate: '' }); // clear the form
+    try {
+      const response = await fetch('/api/reminders/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          job: Number(formData.jobId),
+          reminder_name: formData.title,
+          reminder_date: formData.reminderDate.slice(0, 10),
+        }),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const created = await response.json();
+      setReminders((previous) => [...previous, created]);
+      setFormData({ title: '', reminderDate: '', jobId: '' });
+    } catch (error) {
+      console.error('Failed to add reminder:', error);
+    }
   };
 
-  // HANDLER: delete a reminder by its id
-  const handleDeleteReminder = (id) => {
-    setReminders((previous) => previous.filter((r) => r.id !== id));
+  // Delete a reminder (removed from the database)
+  const handleDeleteReminder = async (id) => {
+    try {
+      const response = await fetch(`/api/reminders/${id}/`, { method: 'DELETE' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      setReminders((previous) => previous.filter((r) => r.reminder_id !== id));
+    } catch (error) {
+      console.error('Failed to delete reminder:', error);
+    }
   };
 
-  // LISTING: combine both sources into one list, soonest first
   const applicationReminders = applications
     .filter((app) => app.reminderDate)
     .map((app) => ({
@@ -58,13 +93,16 @@ function NotificationsView() {
       canDelete: false
     }));
 
-  const customReminders = reminders.map((r) => ({
-    id: `rem-${r.id}`,
-    rawId: r.id,
-    title: r.title,
-    reminderDate: r.reminderDate,
-    canDelete: true
-  }));
+  const customReminders = reminders
+    .filter((r) => r.reminder_date)
+    .map((r) => ({
+      id: `rem-${r.reminder_id}`,
+      rawId: r.reminder_id,
+      title: r.reminder_name,
+      reminderDate: `${r.reminder_date}T00:00:00`,
+      notes: r.description,
+      canDelete: true
+    }));
 
   const allReminders = [...applicationReminders, ...customReminders].sort(
     (a, b) => new Date(a.reminderDate) - new Date(b.reminderDate)
@@ -76,7 +114,6 @@ function NotificationsView() {
 
   const formatDate = (value) => new Date(value).toLocaleString();
 
-  // One row in the list
   const renderReminder = (item, isDue) => (
     <li
       key={item.id}
@@ -124,6 +161,20 @@ function NotificationsView() {
 
       <h2>Add a reminder</h2>
       <form onSubmit={handleAddReminder}>
+        <label>Application</label>
+        <select className="form-input"
+          name="jobId"
+          value={formData.jobId}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select an application</option>
+          {jobs.map((job) => (
+            <option key={job.job_id} value={job.job_id}>
+              {job.company} ({job.position})
+            </option>
+          ))}
+        </select>
         <label>Reminder label</label>
         <input className="form-input"
           type="text"

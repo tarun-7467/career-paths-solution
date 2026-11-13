@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import JobApplication
+from .models import JobApplication, Reminder
 
 
 class JobApplicationSerializer(serializers.ModelSerializer):
@@ -24,3 +24,7 @@ class JobApplicationSerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields = ["job_id", "created_at"]
+class ReminderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reminder
+        fields = "__all__"
