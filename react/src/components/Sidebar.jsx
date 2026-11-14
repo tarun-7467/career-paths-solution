@@ -17,6 +17,8 @@ const menuItems = [
   },
   {
     label: "Account",
+    active: true,
+    path: "/account",
   },
   {
     label: "Settings",

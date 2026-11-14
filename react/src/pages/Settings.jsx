@@ -15,6 +15,7 @@ function Settings({ preferences, setPreferences}) {
     };
 
     return (
+        <div className={`app ${preferences.darkMode ? 'dark-mode' : ''}`}>
         <div className='dashboard'>
             <Header />
             <Sidebar />
@@ -35,6 +36,7 @@ function Settings({ preferences, setPreferences}) {
                     </div>
                 </section>
             </main>
+        </div>
         </div>
     )
 }

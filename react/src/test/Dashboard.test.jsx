@@ -33,11 +33,15 @@ describe('Dashboard API error handling', () => {
       notes: '',
     }
 
-    // Simulate a successful GET followed by a failed POST.
+    // Simulate a successful GET, CSRF request, and failed POST.
     const fetchMock = vi.fn()
       .mockResolvedValueOnce({
         ok: true,
         json: async () => [existingApplication],
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}),
       })
       .mockRejectedValueOnce(new TypeError('Failed to fetch'))
 
@@ -85,10 +89,14 @@ describe('Dashboard API error handling', () => {
       )
     })
 
-    // Verify that the request was attempted.
-    expect(fetchMock).toHaveBeenCalledTimes(2)
-    expect(fetchMock.mock.calls[1][0]).toBe('/api/job-applications/')
-    expect(fetchMock.mock.calls[1][1].method).toBe('POST')
+    // Verify that the POST request was attempted.
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      3,
+      '/api/job-applications/',
+      expect.objectContaining({
+        method: 'POST',
+      })
+    )
 
     // The existing application remains in the table.
     expect(within(table).getByText('Google')).toBeInTheDocument()
