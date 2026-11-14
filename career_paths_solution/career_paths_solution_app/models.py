@@ -16,7 +16,6 @@ class User(models.Model):
 class JobApplication(models.Model):
     STATUS_APPLIED = "Applied"
     STATUS_INTERVIEWING = "Interviewing"
-    STATUS_INTERVIEW = "Interview"
     STATUS_ROUND_2 = "Round 2"
     STATUS_OFFER = "Offer"
     STATUS_REJECTED = "Rejected"
@@ -25,7 +24,6 @@ class JobApplication(models.Model):
     STATUS_CHOICES = [
         (STATUS_APPLIED, "Applied"),
         (STATUS_INTERVIEWING, "Interviewing"),
-        (STATUS_INTERVIEW, "Interview"),
         (STATUS_ROUND_2, "Round 2"),
         (STATUS_OFFER, "Offer"),
         (STATUS_REJECTED, "Rejected"),
