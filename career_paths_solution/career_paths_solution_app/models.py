@@ -9,6 +9,14 @@ class User(models.Model):
     password_hash = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=timezone.now)
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
     class Meta:
         managed = False
         db_table = "users"

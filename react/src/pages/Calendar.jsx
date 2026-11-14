@@ -8,9 +8,8 @@ import Header from '../components/Header.jsx'
 import CalendarView from '../components/CalendarView.jsx' // the calendar itself, shared with the dashboard widget
 
 // The full Calendar page
-function Calendar() {
-  // Simulated logged-in user (same placeholder the dashboard uses)
-  const currentUserId = 1;
+function Calendar({ user, onLogout }) {
+  
 //applications is the list, loading is true until the data arrives, and error holds a message if the request fails.
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,14 +49,12 @@ function Calendar() {
   }, []);
 
   // Show only applications belonging to the current user
-  const userApplications = applications.filter(
-    (application) => application.user === currentUserId
-  );
+    const userApplications = applications;
 // loading and error checks
 
   return (
     <div className="calendar-page">
-      <Header />
+      <Header user={user} onLogout={onLogout} />
       <h1>Career Paths Solution</h1>
       {loading ? (
         <p>Loading calendar...</p>

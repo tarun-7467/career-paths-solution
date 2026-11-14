@@ -7,9 +7,7 @@ class CareerPathsSolutionAppConfig(AppConfig):
 
 class TestCareerPathsSolutionAppConfig(CareerPathsSolutionAppConfig):
     def ready(self):
-        from .models import User, JobApplication, Reminder
+        super().ready()
 
-        # Enable table creation only in the test environment.
-        User._meta.managed = True
-        JobApplication._meta.managed = True
-        Reminder._meta.managed = True
+        for model in self.get_models(include_auto_created=True):
+            model._meta.managed = True

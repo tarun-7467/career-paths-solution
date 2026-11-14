@@ -1,12 +1,15 @@
+
 import hashlib
 from urllib.parse import urlsplit
 
 from django.db import transaction
 from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import JobApplication
 from .serializers import JobApplicationSerializer
+from .authentication import AppSessionAuthentication
 
 
 def get_job_hostname(job_url):
@@ -29,9 +32,20 @@ def build_stable_job_key(requisition_id, job_url):
     return hashlib.sha256(identifier.encode("utf-8")).hexdigest()
 
 
+
 class JobApplicationListCreateView(generics.ListCreateAPIView):
-    queryset = JobApplication.objects.select_related("user").all()
     serializer_class = JobApplicationSerializer
+    authentication_classes = [AppSessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return JobApplication.objects.select_related("user").filter(
+            user=self.request.user
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -89,15 +103,24 @@ class JobApplicationListCreateView(generics.ListCreateAPIView):
 
 
 class JobApplicationDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = JobApplication.objects.all()
     serializer_class = JobApplicationSerializer
+
+    authentication_classes = [AppSessionAuthentication]
+    permission_classes = [IsAuthenticated]
     lookup_field = "job_id"
+
+    def get_queryset(self):
+        return JobApplication.objects.filter(
+            user=self.request.user
+        )
 
     def perform_update(self, serializer):
         application = serializer.instance
         requisition_id = serializer.validated_data.get(
             "requisition_id", application.requisition_id
         )
-        job_url = serializer.validated_data.get("job_url", application.job_url)
+        job_url = serializer.validated_data.get(
+            "job_url", application.job_url
+        )
         stable_job_key = build_stable_job_key(requisition_id, job_url)
         serializer.save(stable_job_key=stable_job_key)
