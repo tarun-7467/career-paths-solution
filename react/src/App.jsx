@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 import './App.css'
 import Dashboard from './pages/Dashboard.jsx'
 import Calendar from './pages/Calendar.jsx'
@@ -8,17 +10,36 @@ import Settings from './pages/Settings.jsx'
 function App() {
   const path = window.location.pathname;
 
-  if (path === "/calendar") {
-    return <Calendar />;
-  }
-  if (path === "/notifications") {
-  return <Notifications />;
-  }
-  if (path === "/settings") {
-  return <Settings />;
-  }
-  return <Dashboard />;
-  
+  const [preferences, setPreferences] = useState(() => {
+    try {
+      const savedPreferences = localStorage.getItem('userPreferences');
+
+      return savedPreferences ? {darkMode: false, ...JSON.parse(savedPreferences)} : {darkMode: false};
+    } catch {
+      return { darkMode: false};
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('userPreferences', JSON.stringify(preferences));
+  }, [preferences]);
+
+  return (
+    <div className={`app ${preferences.darkMode ? 'dark-mode' : ''}`}>
+      {path === "/calendar" ? (
+        <Calendar />
+      ) : path === "/notifications" ? (
+        <Notifications />
+      ) : path === "/settings" ? (
+        <Settings
+        preferences={preferences}
+        setPreferences={setPreferences}
+        />
+      ) : (
+        <Dashboard />
+        )}
+    </div>
+  )
 }
 
 export default App
