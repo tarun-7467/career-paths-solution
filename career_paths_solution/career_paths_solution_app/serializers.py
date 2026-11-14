@@ -21,6 +21,7 @@ class JobApplicationSerializer(serializers.ModelSerializer):
             "posted_date",
             "job_url",
             "job_description",
+            "stable_job_key",
             "created_at",
         ]
-        read_only_fields = ["job_id", "user", "created_at"]
+read_only_fields = ["job_id", "user", "stable_job_key", "created_at"]
