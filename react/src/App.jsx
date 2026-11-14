@@ -15,7 +15,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const path = window.location.pathname;
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
 
   const handleLogout = async () => {
     try {
@@ -87,6 +87,16 @@ function App() {
     return () => controller.abort();
   }, []);
 
+    useEffect(() => {
+      if (loading || error) return;
+
+      if (user && (path === '/login' || path === '/register')) {
+        window.location.replace('/');
+      } else if (!user && path !== '/login' && path !== '/register') {
+        window.location.replace('/login');
+      }
+    }, [loading, error, user, path]);
+
   if (loading) {
     return <p>Checking login status...</p>;
   }
@@ -96,23 +106,14 @@ function App() {
   }
 
   if (path === '/login') {
-    if (user) {
-      window.location.replace('/');
-      return null;
-    }
-    return <Login />;
+    return user ? null : <Login />;
   }
 
   if (path === '/register') {
-    if (user) {
-      window.location.replace('/');
-      return null;
-    }
-    return <Register />;
+    return user ? null : <Register />;
   }
 
   if (!user) {
-    window.location.replace('/login');
     return null;
   }
 
