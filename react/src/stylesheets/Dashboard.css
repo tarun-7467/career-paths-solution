@@ -308,3 +308,25 @@
   margin-bottom: 10px;
   border-bottom: 1px solid #c9c9c9;
 }
+
+.settings-widget {
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 11px;
+  background: #f8f8f8;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 18%);
+}
+
+.settings-widget .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.settings {
+  font-size: 12px;
+}
+
+.setting {
+  display: flex;
+}

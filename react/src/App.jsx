@@ -8,6 +8,7 @@ import Notifications from './pages/Notifications.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Account from './pages/Account.jsx';
+import Settings from './pages/Settings.jsx';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -125,6 +126,10 @@ function App() {
 
   if (path === '/notifications') {
     return <Notifications user={user} onLogout={handleLogout} />;
+  }
+
+  if (path === '/settings') {
+    return <Settings />;
   }
 
   return <Dashboard user={user} onLogout={handleLogout} />;

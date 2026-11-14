@@ -22,6 +22,8 @@ const menuItems = [
   },
   {
     label: "Settings",
+    active: true,
+    path: "/settings",
   },
 ];
 
