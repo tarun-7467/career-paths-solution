@@ -2,20 +2,12 @@ import { useState, useEffect } from 'react';
 
 import '../stylesheets/Dashboard.css';
 
-function loadList(key) {
-  try {
-    return JSON.parse(localStorage.getItem(key) || '[]');
-  } catch (error) {
-    return [];
-  }
-}
 
 function NotificationsView() {
   const currentUserId = 1;
 
   const [reminders, setReminders] = useState([]);
   const [jobs, setJobs] = useState([]);
-  const [applications] = useState(() => loadList('applications'));
   const [formData, setFormData] = useState({ title: '', reminderDate: '', jobId: '' });
 
   // Load jobs and reminders from Django when the page opens
@@ -83,30 +75,25 @@ function NotificationsView() {
     }
   };
 
-  const applicationReminders = applications
-    .filter((app) => app.reminderDate)
-    .map((app) => ({
-      id: `app-${app.id}`,
-      title: `${app.company} (${app.position})`,
-      reminderDate: app.reminderDate,
-      notes: app.notes,
-      canDelete: false
-    }));
+    // Look up an application's name from its id
+  const jobNameById = {};
+  jobs.forEach((job) => {
+    jobNameById[job.job_id] = `${job.company} (${job.position})`;
+  });
 
-  const customReminders = reminders
+  // Turn database reminders into list items, soonest first
+  const allReminders = reminders
     .filter((r) => r.reminder_date)
     .map((r) => ({
       id: `rem-${r.reminder_id}`,
       rawId: r.reminder_id,
       title: r.reminder_name,
+      applicationName: jobNameById[r.job],
       reminderDate: `${r.reminder_date}T00:00:00`,
       notes: r.description,
       canDelete: true
-    }));
-
-  const allReminders = [...applicationReminders, ...customReminders].sort(
-    (a, b) => new Date(a.reminderDate) - new Date(b.reminderDate)
-  );
+    }))
+    .sort((a, b) => new Date(a.reminderDate) - new Date(b.reminderDate));
 
   const now = new Date();
   const dueReminders = allReminders.filter((r) => new Date(r.reminderDate) <= now);
@@ -126,6 +113,7 @@ function NotificationsView() {
       }}
     >
       <strong>{item.title}</strong>
+      <div>Application: {item.applicationName}</div>
       <div>Reminder: {formatDate(item.reminderDate)}</div>
       {item.notes && <div>Notes: {item.notes}</div>}
       {item.canDelete && (
