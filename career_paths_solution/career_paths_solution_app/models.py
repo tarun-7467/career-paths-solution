@@ -22,6 +22,24 @@ class User(models.Model):
         db_table = "users"
 
 class JobApplication(models.Model):
+    STATUS_APPLIED = "Applied"
+    STATUS_INTERVIEWING = "Interviewing"
+    STATUS_INTERVIEW = "Interview"
+    STATUS_ROUND_2 = "Round 2"
+    STATUS_OFFER = "Offer"
+    STATUS_REJECTED = "Rejected"
+    STATUS_WITHDRAWN = "Withdrawn"
+
+    STATUS_CHOICES = [
+        (STATUS_APPLIED, "Applied"),
+        (STATUS_INTERVIEWING, "Interviewing"),
+        (STATUS_INTERVIEW, "Interview"),
+        (STATUS_ROUND_2, "Round 2"),
+        (STATUS_OFFER, "Offer"),
+        (STATUS_REJECTED, "Rejected"),
+        (STATUS_WITHDRAWN, "Withdrawn"),
+    ]
+
     job_id = models.AutoField(primary_key=True)
 
     user = models.ForeignKey(
@@ -32,7 +50,11 @@ class JobApplication(models.Model):
 
     company = models.CharField(max_length=255)
     position = models.CharField(max_length=255)
-    status = models.CharField(max_length=255)
+    status = models.CharField(
+        max_length=50,
+        choices=STATUS_CHOICES,
+        default=STATUS_APPLIED,
+    )
     date_applied = models.DateField(null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
     # Additional job details from job postings and Chrome Extension
