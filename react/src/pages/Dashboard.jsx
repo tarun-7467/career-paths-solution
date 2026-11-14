@@ -15,9 +15,7 @@ import NotificationsWidget from '../components/NotificationsWidget.jsx'
 // Styling imports
 import '../stylesheets/Dashboard.css';
 
-function Dashboard() {
-    // Simulated logged-in user
-    const currentUserId = 1;
+function Dashboard({ user, onLogout }) {
 
     // Store applications in React state
     const [applications, setApplications] = useState([]);
@@ -63,30 +61,39 @@ function Dashboard() {
 
     // Add a new application through the Django API
     const handleAddApplication = async (newApplication) => {
-        try {
-            const response = await fetch('/api/job-applications/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...newApplication,
-                    user: currentUserId,
-                }),
-            });
+    try {
+        const csrfResponse = await fetch('/api/auth/csrf/', {
+            credentials: 'same-origin',
+        });
 
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
+        if (!csrfResponse.ok) {
+            throw new Error('Failed to get CSRF token.');
+        }
 
-            const savedApplication = await response.json();
+        const { csrfToken } = await csrfResponse.json();
 
-            setApplications((previous) => [
-                ...previous,
-                savedApplication,
-            ]);
+        const response = await fetch('/api/job-applications/', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify(newApplication),
+        });
 
-            return true;
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const savedApplication = await response.json();
+
+        setApplications((previous) => [
+            ...previous,
+            savedApplication,
+        ]);
+
+        return true;
         } catch (err) {
             console.error('Failed to add application:', err);
             return false;
@@ -100,12 +107,24 @@ function Dashboard() {
         }
 
         try {
+            const csrfResponse = await fetch('/api/auth/csrf/', {
+                credentials: 'same-origin',
+            });
+
+            if (!csrfResponse.ok) {
+                throw new Error('Failed to get CSRF token.');
+            }
+
+            const { csrfToken } = await csrfResponse.json();
+
             const response = await fetch(
                 `/api/job-applications/${editingApplication.job_id}/`,
                 {
                     method: 'PATCH',
+                    credentials: 'same-origin',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
                     },
                     body: JSON.stringify(updatedApplication),
                 }
@@ -154,10 +173,24 @@ function Dashboard() {
         }
 
         try {
+            const csrfResponse = await fetch('/api/auth/csrf/', {
+                credentials: 'same-origin',
+            });
+
+            if (!csrfResponse.ok) {
+                throw new Error('Failed to get CSRF token.');
+            }
+
+            const { csrfToken } = await csrfResponse.json();
+
             const response = await fetch(
                 `/api/job-applications/${jobId}/`,
                 {
                     method: 'DELETE',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    },
                 }
             );
 
@@ -184,14 +217,12 @@ function Dashboard() {
         }
     };
 
-    // Show only applications belonging to the current user
-    const userApplications = applications.filter(
-        (application) => application.user === currentUserId
-    );
+    // Django already returns applications for the authenticated user
+    const userApplications = applications;
 
     return (
         <div className="dashboard">
-            <Header />
+            <Header user={user} onLogout={onLogout} />
             <Sidebar />
 
             <main className="dashboard-content">

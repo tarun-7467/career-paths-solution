@@ -1,13 +1,32 @@
-from django.shortcuts import render
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+
 from .models import JobApplication
-from.serializers import JobApplicationSerializer
+from .serializers import JobApplicationSerializer
+from .authentication import AppSessionAuthentication
+
 
 class JobApplicationListCreateView(generics.ListCreateAPIView):
-    queryset = JobApplication.objects.select_related("user").all()
     serializer_class = JobApplicationSerializer
+    authentication_classes = [AppSessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return JobApplication.objects.select_related("user").filter(
+            user=self.request.user
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class JobApplicationDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = JobApplication.objects.all()
     serializer_class = JobApplicationSerializer
+    authentication_classes = [AppSessionAuthentication]
+    permission_classes = [IsAuthenticated]
     lookup_field = "job_id"
+
+    def get_queryset(self):
+        return JobApplication.objects.filter(
+            user=self.request.user
+        )
