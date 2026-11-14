@@ -1,12 +1,37 @@
 /* Dashboard stylings */
 
+/* Variables to reference for base CSS palette and dark mode palette respecfully */
+.app {
+  --background-color: #aebde0;
+  --background-color-2: #f8f8f8;
+  --sidebar-color: #1e356d;
+  --sidebar-link-color: #f8f8f8;
+  --border-color: #c9c9c9;
+  --text-color: #111827;
+  --header-text-color: #1e356d;
+  --link-color: #1e356d;
+  --table-color: white;
+}
+/*#1e356d*/
+.app.dark-mode {
+  --background-color: #2a3758;
+  --background-color-2: #151329;
+  --sidebar-color: #151329;
+  --sidebar-link-color: #2a3758;
+  --border-color: #c9c9c9;
+  --text-color: #f8f8f8;
+  --header-text-color: #f8f8f8;
+  --link-color: #537adb;
+  --table-color: #2a3758;
+}
+
 .dashboard {
+  background: var(--background-color);
+  color: var(--text-color);
   min-height: 100vh;
   display: grid;
   grid-template-columns: 150px 1fr;
   grid-template-rows: 64px 1fr;
-  background: #aebde0;
-  color: #111827;
   text-align:left;
 }
 
@@ -19,7 +44,7 @@
   grid-column: 1;
   grid-row: 2;
   padding: 8px 18px;
-  background: #1e356d;
+  background: var(--sidebar-color);
 }
 
 .sidebar-nav {
@@ -33,8 +58,8 @@
   display: block;
   padding: 9px 16px;
   border-radius: 9px;
-  background: #f8f8f8;
-  color: #111827;
+  background: var(--sidebar-link-color);
+  color: var(--text-color);
   font-size: 11px;
   text-decoration: none;
   box-shadow: 0 2px 4px rgb(0 0 0 / 18%);
@@ -50,19 +75,19 @@
   min-height: 100px;
   padding: 20px;
   border-radius: 11px;
-  background: #f8f8f8;
+  background: var(--background-color-2);
   box-shadow: 0 2px 4px rgb(0 0 0 / 18%);
 }
 
 .panel-header {
-  border-bottom: 1px solid #c9c9c9;
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 20px;
 }
 
 .panel-header h2 {
   margin: 0 0 12px;
   font-size: 16px;
-  color: #111827;
+  color: var(--text-color);
   font-weight: 500;
 }
 
@@ -80,7 +105,7 @@
   box-sizing: border-box;
   border-bottom: 1px solid #111827;
   box-shadow: 0 2px 4px rgb(0 0 0 / 18%);
-  background: #f8f8f8;
+  background: var(--background-color-2);
 }
 
 .page-header .button {
@@ -91,13 +116,13 @@
   margin: 0;
   font-size: 24px;
   font-weight: 600;
-  color:#1e356d
+  color: var(--header-text-color)
 }
 
 .form-header { 
   margin-bottom: 20px;
   font-size: 16px;
-  border-top: 1px solid #c9c9c9;
+  border-top: 1px solid var(--border-color);
 }
 
 .button {
@@ -146,7 +171,7 @@
   display: block;
   margin: 0 0 12px;
   font-size: 16px;
-  color: #111827;
+  color: var(--text-color);
   font-weight: 500;
 }
 
@@ -156,8 +181,8 @@
   text-align: left;
   font-size: 13px;
   margin-bottom: 20px;
-  background: white;
-  border-top: 1px solid #c9c9c9;
+  background: var(--table-color);
+  border-top: 1px solid var(--border-color);
 }
 
 .applications-table th,
@@ -206,7 +231,7 @@
 
 .form-container h2 {
   font-size: 16px;
-  color: #111827;
+  color: var(--text-color);
   margin-top: 12px;
 }
 
@@ -257,8 +282,9 @@
   margin-bottom: 20px;
   padding: 20px;
   border-radius: 11px;
-  background: #f8f8f8;
+  background: var(--background-color-2);
   box-shadow: 0 2px 4px rgb(0 0 0 / 18%);
+  
 }
 
 /* Title on the left, link on the right */
@@ -270,7 +296,7 @@
 
 .widget-link {
   font-size: 11px;
-  color: #1e356d;
+  color: var(--link-color);
 }
 
 .calendar-widget .widget-toolbar-title {
@@ -279,11 +305,25 @@
   
 }
 
+.calendar-widget .fc-classic-SDU {
+  background: var(--table-color);
+}
+
+.calendar-widget .fc-classic-GAX {
+  background: var(--table-color);
+  color: var(--text-color);
+}
+
+.calendar-widget .fc-classic-C1x {
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
 .notifications-widget {
   margin-bottom: 20px;
   padding: 20px;
   border-radius: 11px;
-  background: #f8f8f8;
+  background: var(--background-color-2);
   box-shadow: 0 2px 4px rgb(0 0 0 / 18%);
 }
 
@@ -296,7 +336,7 @@
 .notifications h2 {
   margin: 0 0 12px;
   font-size: 16px;
-  color: #111827;
+  color: var(--text-color);
   font-weight: 500;
 }
 
@@ -306,14 +346,14 @@
 
 .add-reminder {
   margin-bottom: 10px;
-  border-bottom: 1px solid #c9c9c9;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .settings-widget {
   margin-bottom: 20px;
   padding: 20px;
   border-radius: 11px;
-  background: #f8f8f8;
+  background: var(--background-color-2);
   box-shadow: 0 2px 4px rgb(0 0 0 / 18%);
 }
 
