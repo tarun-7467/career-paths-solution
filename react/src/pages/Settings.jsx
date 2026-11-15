@@ -5,7 +5,7 @@ import Sidebar from '../components/Sidebar.jsx'
 
 import '../stylesheets/Dashboard.css';
 
-function Settings({ preferences, setPreferences}) {
+function Settings({user, onLogout, preferences, setPreferences}) {
 
     const handleToggle = () => {
         setPreferences(prev => ({
@@ -17,7 +17,7 @@ function Settings({ preferences, setPreferences}) {
     return (
         <div className={`app ${preferences.darkMode ? 'dark-mode' : ''}`}>
         <div className='dashboard'>
-            <Header />
+            <Header user={user} onLogout={onLogout} />
             <Sidebar />
             <main className="dashboard-content">
                 <section className="settings-widget">
