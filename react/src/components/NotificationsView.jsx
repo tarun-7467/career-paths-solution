@@ -2,32 +2,42 @@ import { useState, useEffect } from 'react';
 
 import '../stylesheets/Dashboard.css';
 
+// Get a CSRF token from Django (same pattern as the Dashboard page)
+async function getCsrfToken() {
+  const response = await fetch('/api/auth/csrf/', {
+    credentials: 'same-origin',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to get CSRF token.');
+  }
+  const { csrfToken } = await response.json();
+  return csrfToken;
+}
 
 function NotificationsView() {
-  const currentUserId = 1;
-
+  // STATE 1: reminders for the logged-in user (from the database)
   const [reminders, setReminders] = useState([]);
+
+  // STATE 2: the logged-in user's job applications (for the dropdown)
   const [jobs, setJobs] = useState([]);
+
+  // STATE 3: what the user is typing in the add-reminder form
   const [formData, setFormData] = useState({ title: '', reminderDate: '', jobId: '' });
 
-  // Load jobs and reminders from Django when the page opens
+  // Load applications and reminders when the page opens.
+  // Django only returns the logged-in user's data.
   useEffect(() => {
     const loadData = async () => {
       try {
         const [jobsResponse, remindersResponse] = await Promise.all([
-          fetch('/api/job-applications/'),
-          fetch('/api/reminders/'),
+          fetch('/api/job-applications/', { credentials: 'same-origin' }),
+          fetch('/api/reminders/', { credentials: 'same-origin' }),
         ]);
         if (!jobsResponse.ok || !remindersResponse.ok) {
           throw new Error('Request failed');
         }
-        const allJobs = await jobsResponse.json();
-        const allReminders = await remindersResponse.json();
-
-        const myJobs = allJobs.filter((job) => job.user === currentUserId);
-        const myJobIds = myJobs.map((job) => job.job_id);
-        setJobs(myJobs);
-        setReminders(allReminders.filter((r) => myJobIds.includes(r.job)));
+        setJobs(await jobsResponse.json());
+        setReminders(await remindersResponse.json());
       } catch (error) {
         console.error('Failed to load reminders:', error);
       }
@@ -35,24 +45,30 @@ function NotificationsView() {
     loadData();
   }, []);
 
+  // HANDLER: update the form as the user types
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((previous) => ({ ...previous, [name]: value }));
   };
 
-  // Add a reminder (saved in the database)
+  // HANDLER: add a reminder (saved in the database)
   const handleAddReminder = async (event) => {
     event.preventDefault();
     if (!formData.title || !formData.reminderDate || !formData.jobId) return;
 
     try {
+      const csrfToken = await getCsrfToken();
       const response = await fetch('/api/reminders/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
         body: JSON.stringify({
           job: Number(formData.jobId),
           reminder_name: formData.title,
-          reminder_date: formData.reminderDate.slice(0, 10),
+          reminder_date: formData.reminderDate.slice(0, 10), // database stores the date only
         }),
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -64,10 +80,15 @@ function NotificationsView() {
     }
   };
 
-  // Delete a reminder (removed from the database)
+  // HANDLER: delete a reminder (removed from the database)
   const handleDeleteReminder = async (id) => {
     try {
-      const response = await fetch(`/api/reminders/${id}/`, { method: 'DELETE' });
+      const csrfToken = await getCsrfToken();
+      const response = await fetch(`/api/reminders/${id}/`, {
+        method: 'DELETE',
+        credentials: 'same-origin',
+        headers: { 'X-CSRFToken': csrfToken },
+      });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       setReminders((previous) => previous.filter((r) => r.reminder_id !== id));
     } catch (error) {
@@ -75,7 +96,7 @@ function NotificationsView() {
     }
   };
 
-    // Look up an application's name from its id
+  // Look up an application's name from its id
   const jobNameById = {};
   jobs.forEach((job) => {
     jobNameById[job.job_id] = `${job.company} (${job.position})`;
@@ -89,9 +110,8 @@ function NotificationsView() {
       rawId: r.reminder_id,
       title: r.reminder_name,
       applicationName: jobNameById[r.job],
-      reminderDate: `${r.reminder_date}T00:00:00`,
+      reminderDate: `${r.reminder_date}T00:00:00`, // read as local time so the day doesn't shift
       notes: r.description,
-      canDelete: true
     }))
     .sort((a, b) => new Date(a.reminderDate) - new Date(b.reminderDate));
 
@@ -99,8 +119,9 @@ function NotificationsView() {
   const dueReminders = allReminders.filter((r) => new Date(r.reminderDate) <= now);
   const upcomingReminders = allReminders.filter((r) => new Date(r.reminderDate) > now);
 
-  const formatDate = (value) => new Date(value).toLocaleString();
+  const formatDate = (value) => new Date(value).toLocaleDateString();
 
+  // One row in the list
   const renderReminder = (item, isDue) => (
     <li
       key={item.id}
@@ -116,35 +137,33 @@ function NotificationsView() {
       <div>Application: {item.applicationName}</div>
       <div>Reminder: {formatDate(item.reminderDate)}</div>
       {item.notes && <div>Notes: {item.notes}</div>}
-      {item.canDelete && (
-        <button className="button secondary" type="button" onClick={() => handleDeleteReminder(item.rawId)}>
-          Delete
-        </button>
-      )}
+      <button className="button secondary" type="button" onClick={() => handleDeleteReminder(item.rawId)}>
+        Delete
+      </button>
     </li>
   );
 
   return (
     <div className="notifications">
 
-    <div className="add-reminder">
-    <h2>Due now ({dueReminders.length})</h2>
-      {dueReminders.length === 0 ? (
-        <p>Nothing is due right now.</p>
-      ) : (
-        <ul style={{ padding: 0 }}>
-          {dueReminders.map((item) => renderReminder(item, true))}
-        </ul>
-      )}
+      <div className="add-reminder">
+        <h2>Due now ({dueReminders.length})</h2>
+        {dueReminders.length === 0 ? (
+          <p>Nothing is due right now.</p>
+        ) : (
+          <ul style={{ padding: 0 }}>
+            {dueReminders.map((item) => renderReminder(item, true))}
+          </ul>
+        )}
 
-      <h2>Upcoming ({upcomingReminders.length})</h2>
-      {upcomingReminders.length === 0 ? (
-        <p>No upcoming reminders.</p>
-      ) : (
-        <ul style={{ padding: 0 }}>
-          {upcomingReminders.map((item) => renderReminder(item, false))}
-        </ul>
-      )}
+        <h2>Upcoming ({upcomingReminders.length})</h2>
+        {upcomingReminders.length === 0 ? (
+          <p>No upcoming reminders.</p>
+        ) : (
+          <ul style={{ padding: 0 }}>
+            {upcomingReminders.map((item) => renderReminder(item, false))}
+          </ul>
+        )}
       </div>
 
       <h2>Add a reminder</h2>
@@ -174,7 +193,7 @@ function NotificationsView() {
         />
         <label>Reminder date</label>
         <input className="form-input"
-          type="datetime-local"
+          type="date"
           name="reminderDate"
           value={formData.reminderDate}
           onChange={handleChange}
