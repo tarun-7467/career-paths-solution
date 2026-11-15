@@ -15,7 +15,21 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const [preferences, setPreferences] = useState(() => {
+    try {
+      const savedPreferences = localStorage.getItem('userPreferences');
+
+      return savedPreferences ? {darkMode: false, ...JSON.parse(savedPreferences)} : {darkMode: false};
+    } catch {
+      return { darkMode: false};
+    }
+  });
+
   const path = window.location.pathname.replace(/\/+$/, '') || '/';
+
+  useEffect(() => {
+    localStorage.setItem('userPreferences', JSON.stringify(preferences));
+  }, [preferences]);
 
   const handleLogout = async () => {
     try {
@@ -118,22 +132,22 @@ function App() {
   }
 
   if (path === '/account') {
-    return <Account user={user} onLogout={handleLogout} />;
+    return <Account user={user} onLogout={handleLogout} preferences={preferences} />;
   }
 
   if (path === '/calendar') {
-    return <Calendar user={user} onLogout={handleLogout} />;
+    return <Calendar user={user} onLogout={handleLogout} preferences={preferences} />;
   }
 
   if (path === '/notifications') {
-    return <Notifications user={user} onLogout={handleLogout} />;
+    return <Notifications user={user} onLogout={handleLogout} preferences={preferences} />;
   }
 
   if (path === '/settings') {
-    return <Settings />;
+    return <Settings user={user} onLogout={handleLogout} preferences={preferences} setPreferences={setPreferences}/>;
   }
 
-  return <Dashboard user={user} onLogout={handleLogout} />;
+  return <Dashboard user={user} onLogout={handleLogout} preferences={preferences} />;
 }
 
 export default App;

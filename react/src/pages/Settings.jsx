@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 
 // Component imports
 import Header from '../components/Header.jsx'
@@ -6,10 +5,19 @@ import Sidebar from '../components/Sidebar.jsx'
 
 import '../stylesheets/Dashboard.css';
 
-function Settings() {
+function Settings({user, onLogout, preferences, setPreferences}) {
+
+    const handleToggle = () => {
+        setPreferences(prev => ({
+            ...prev,
+            darkMode: !prev.darkMode
+        }));
+    };
+
     return (
-        <div className="dashboard">
-            <Header />
+        <div className={`app ${preferences.darkMode ? 'dark-mode' : ''}`}>
+        <div className='dashboard'>
+            <Header user={user} onLogout={onLogout} />
             <Sidebar />
             <main className="dashboard-content">
                 <section className="settings-widget">
@@ -19,14 +27,16 @@ function Settings() {
                     <div className="settings">
                         <div className="setting">
                             <p>Dark Mode</p>
-                            <input className="react-switch" id={'darkmode-switch'} type="checkbox" />
+                            <input className="react-switch" id={'darkmode-switch'} type="checkbox" checked={preferences.darkMode} onChange={handleToggle}/>
                         </div>
                         <div className="setting">
                             <p>Enable/Disable Components</p>
+                            <input className="react-switch" id={'component-switch'} type="checkbox"/>
                         </div>
                     </div>
                 </section>
             </main>
+        </div>
         </div>
     )
 }

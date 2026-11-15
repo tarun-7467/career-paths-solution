@@ -8,7 +8,7 @@ import Header from '../components/Header.jsx'
 import CalendarView from '../components/CalendarView.jsx' // the calendar itself, shared with the dashboard widget
 
 // The full Calendar page
-function Calendar({ user, onLogout }) {
+function Calendar({ user, onLogout, preferences}) {
   
 //applications is the list, loading is true until the data arrives, and error holds a message if the request fails.
   const [applications, setApplications] = useState([]);
@@ -53,6 +53,7 @@ function Calendar({ user, onLogout }) {
 // loading and error checks
 
   return (
+    <div className={`app ${preferences.darkMode ? 'dark-mode' : ''}`}>
     <div className="calendar-page">
       <Header user={user} onLogout={onLogout} />
       <h1>Career Paths Solution</h1>
@@ -63,6 +64,7 @@ function Calendar({ user, onLogout }) {
       ) : (
         <CalendarView applications={userApplications} />
       )}
+    </div>
     </div>
   );
 }

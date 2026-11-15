@@ -15,7 +15,7 @@ import NotificationsWidget from '../components/NotificationsWidget.jsx'
 // Styling imports
 import '../stylesheets/Dashboard.css';
 
-function Dashboard({ user, onLogout }) {
+function Dashboard({ user, onLogout, preferences }) {
 
     // Store applications in React state
     const [applications, setApplications] = useState([]);
@@ -221,6 +221,7 @@ function Dashboard({ user, onLogout }) {
     const userApplications = applications;
 
     return (
+        <div className={`app ${preferences.darkMode ? 'dark-mode' : ''}`}>
         <div className="dashboard">
             <Header user={user} onLogout={onLogout} />
             <Sidebar />
@@ -296,7 +297,6 @@ function Dashboard({ user, onLogout }) {
 
 
                     <FormEntry
-                      key={editingApplication?.job_id ?? "new"}
                       onAddApplication={handleAddApplication}
                       onUpdateApplication={handleUpdateApplication}
                       editingApplication={editingApplication}
@@ -304,6 +304,7 @@ function Dashboard({ user, onLogout }) {
                     />
                 </section>
             </main>
+        </div>
         </div>
     );
 }

@@ -3,8 +3,9 @@ import Header from '../components/Header.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 import '../stylesheets/Dashboard.css';
 
-function Account({ user, onLogout }) {
+function Account({ user, onLogout, preferences }) {
   return (
+    <div className={`app ${preferences.darkMode ? 'dark-mode' : ''}`}>
     <div className="dashboard">
       <Header user={user} onLogout={onLogout} />
 
@@ -29,6 +30,7 @@ function Account({ user, onLogout }) {
           </p>
         </section>
       </main>
+    </div>
     </div>
   );
 }
