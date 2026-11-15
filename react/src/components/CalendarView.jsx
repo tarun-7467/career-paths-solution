@@ -10,14 +10,21 @@ import '@fullcalendar/react/themes/classic/theme.css';
 import '@fullcalendar/react/themes/classic/palette.css';
 
 // Mock data imports
-import { jobApplications, reminders } from '../pages/mockData';
+// Reminders are still mock until they have an API
+import { reminders } from '../pages/mockData';
+// One color per application status
+const STATUS_COLORS = {
+  Applied: '#57f442',   // green
+  Interview: '#4285F4', // blue
+  Offer: '#0b4802',     // green
+  Rejected: '#EA4335',  // red
+};
 
 function buildCalendarEvents(applications) {
   // Turn each job application into a calendar event
   const applicationEvents = applications.map((job) => ({
-    title: `Applied: ${job.company} (${job.position})`,
-    date: job.date_applied,
-    color: '#57f442' // green for applications
+  title: `${job.status}: ${job.company} (${job.position})`,    date: job.date_applied,
+    color: STATUS_COLORS[job.status] ?? '#57f442', // falls back to green if the status isn't listed 
   }));
 
   // Turn each reminder into a calendar event
@@ -32,8 +39,8 @@ function buildCalendarEvents(applications) {
 }
 
 // compact = true is used by the dashboard widget
-function CalendarView({ compact = false, applications = jobApplications }) {
-  const events = buildCalendarEvents(applications);
+function CalendarView({ compact = false, applications = [] }) {
+    const events = buildCalendarEvents(applications);
 
   return (
     <FullCalendar
@@ -42,7 +49,7 @@ function CalendarView({ compact = false, applications = jobApplications }) {
       initialDate={new Date()} // opens on today's date
       headerToolbar={
         compact
-          ? { left: 'prev,next', center: 'title', right: '' }
+          ? { left: 'prev,next today', center: 'title', right: '' }
           : { left: 'prev,next today', center: 'title', right: 'dayGridMonth' }
       }
       height="auto"
