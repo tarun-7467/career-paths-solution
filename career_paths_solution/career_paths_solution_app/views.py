@@ -148,3 +148,9 @@ class ReminderDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Reminder.objects.filter(job__user=self.request.user)
+
+    def perform_update(self, serializer):
+        # The application can't be changed after a reminder is created,
+        # so a reminder can never be moved onto someone else's application.
+        serializer.validated_data.pop("job", None)
+        serializer.save()
