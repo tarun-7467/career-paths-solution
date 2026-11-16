@@ -1,4 +1,3 @@
-
 from rest_framework import serializers
 from .models import JobApplication
 
@@ -24,4 +23,4 @@ class JobApplicationSerializer(serializers.ModelSerializer):
             "stable_job_key",
             "created_at",
         ]
-read_only_fields = ["job_id", "user", "stable_job_key", "created_at"]
+        read_only_fields = ["job_id", "user", "stable_job_key", "created_at"]

@@ -1,4 +1,3 @@
-
 import hashlib
 from urllib.parse import urlsplit
 
@@ -9,7 +8,7 @@ from rest_framework.response import Response
 
 from .models import JobApplication
 from .serializers import JobApplicationSerializer
-from .authentication import AppSessionAuthentication
+from .authentication import AppSessionAuthentication, ExtensionTokenAuthentication
 
 
 def get_job_hostname(job_url):
@@ -35,7 +34,7 @@ def build_stable_job_key(requisition_id, job_url):
 
 class JobApplicationListCreateView(generics.ListCreateAPIView):
     serializer_class = JobApplicationSerializer
-    authentication_classes = [AppSessionAuthentication]
+    authentication_classes = [ExtensionTokenAuthentication, AppSessionAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -51,7 +50,8 @@ class JobApplicationListCreateView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         application_data = serializer.validated_data
-        user = application_data["user"]
+
+        user = request.user
         requisition_id = application_data.get("requisition_id") or ""
         job_url = application_data.get("job_url") or ""
         stable_job_key = build_stable_job_key(requisition_id, job_url)
@@ -62,6 +62,7 @@ class JobApplicationListCreateView(generics.ListCreateAPIView):
                 applications.filter(stable_job_key=stable_job_key).first()
                 if stable_job_key else None
             )
+
             if not existing and requisition_id.strip():
                 hostname = get_job_hostname(job_url)
                 for candidate in applications.filter(
@@ -70,6 +71,7 @@ class JobApplicationListCreateView(generics.ListCreateAPIView):
                     if get_job_hostname(candidate.job_url) == hostname:
                         existing = candidate
                         break
+
             if not existing and job_url:
                 existing = applications.filter(job_url=job_url).first()
 
@@ -92,7 +94,7 @@ class JobApplicationListCreateView(generics.ListCreateAPIView):
                 response_serializer = self.get_serializer(existing)
                 return Response(response_serializer.data, status=status.HTTP_200_OK)
 
-            application = serializer.save(stable_job_key=stable_job_key)
+            application = serializer.save(user=user, stable_job_key=stable_job_key)
 
         response_serializer = self.get_serializer(application)
         return Response(
@@ -105,7 +107,7 @@ class JobApplicationListCreateView(generics.ListCreateAPIView):
 class JobApplicationDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = JobApplicationSerializer
 
-    authentication_classes = [AppSessionAuthentication]
+    authentication_classes = [ExtensionTokenAuthentication, AppSessionAuthentication]
     permission_classes = [IsAuthenticated]
     lookup_field = "job_id"
 
