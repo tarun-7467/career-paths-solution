@@ -5,7 +5,7 @@ UPDATE "job_applications"
 SET "status" = 'Applied'
 WHERE "status" IS NULL OR "status" = '';
 
-SELECT id, status
+SELECT job_id, status
 FROM "job_applications"
 WHERE "status" NOT IN ('Applied', 'Interviewing', 'Round 2', 'Offer', 'Rejected', 'Withdrawn');
 
