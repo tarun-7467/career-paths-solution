@@ -50,7 +50,7 @@ class JobApplicationListCreateView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         application_data = serializer.validated_data
-        user = application_data["user"]
+        user = request.user
         requisition_id = application_data.get("requisition_id") or ""
         job_url = application_data.get("job_url") or ""
         stable_job_key = build_stable_job_key(requisition_id, job_url)
@@ -91,7 +91,9 @@ class JobApplicationListCreateView(generics.ListCreateAPIView):
                 response_serializer = self.get_serializer(existing)
                 return Response(response_serializer.data, status=status.HTTP_200_OK)
 
-            application = serializer.save(stable_job_key=stable_job_key)
+            application = serializer.save(
+                user=request.user, stable_job_key=stable_job_key
+            )
 
         response_serializer = self.get_serializer(application)
         return Response(
