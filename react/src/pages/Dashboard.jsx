@@ -297,10 +297,11 @@ function Dashboard({ user, onLogout, preferences }) {
 
 
                     <FormEntry
-                      onAddApplication={handleAddApplication}
-                      onUpdateApplication={handleUpdateApplication}
-                      editingApplication={editingApplication}
-                      onCancelEdit={handleCancelEdit}
+                        key={editingApplication?.job_id ?? "new"}
+                        onAddApplication={handleAddApplication}
+                        onUpdateApplication={handleUpdateApplication}
+                        editingApplication={editingApplication}
+                        onCancelEdit={handleCancelEdit}
                     />
                 </section>
             </main>

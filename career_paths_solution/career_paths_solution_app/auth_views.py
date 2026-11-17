@@ -104,6 +104,46 @@ class LoginView(APIView):
             status=status.HTTP_200_OK
         )
 
+
+class ExtensionLoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data["email"]
+        password = serializer.validated_data["password"]
+
+        user = User.objects.filter(email__iexact=email).first()
+
+        if user is None or not check_password(
+            password, user.password_hash
+        ):
+            return Response(
+                {"error": "Invalid email or password."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        if not user.api_token:
+            user.api_token = uuid.uuid4().hex
+            user.save(update_fields=["api_token"])
+
+        return Response(
+            {
+                "message": "Extension login successful.",
+                "user": {
+                    "user_id": user.user_id,
+                    "name": user.name,
+                    "email": user.email,
+                },
+                "apiToken": user.api_token,
+            },
+            status=status.HTTP_200_OK
+        )
+
+
 class LogoutView(APIView):
     authentication_classes = [AppSessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
