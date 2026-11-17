@@ -3,6 +3,7 @@ CREATE TABLE "users" (
   "name" varchar NOT NULL,
   "email" varchar UNIQUE NOT NULL,
   "password_hash" varchar NOT NULL,
+  "api_token" varchar(255) UNIQUE,
   "created_at" timestamptz DEFAULT (now())
 );
 

@@ -7,6 +7,7 @@ class User(models.Model):
     name = models.CharField(max_length=255)
     email = models.CharField(max_length=255, unique=True)
     password_hash = models.CharField(max_length=255)
+    api_token = models.CharField(max_length=255, unique=True, null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 
     @property

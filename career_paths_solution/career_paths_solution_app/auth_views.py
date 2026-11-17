@@ -1,3 +1,4 @@
+import uuid
 
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
@@ -7,7 +8,7 @@ from rest_framework.views import APIView
 from .models import User
 
 from .auth_serializers import RegisterSerializer, LoginSerializer
-from .authentication import AppSessionAuthentication
+from .authentication import AppSessionAuthentication, ExtensionTokenAuthentication
 from django.middleware.csrf import get_token
 from rest_framework.authentication import CSRFCheck
 from rest_framework.exceptions import PermissionDenied
@@ -82,6 +83,11 @@ class LoginView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
+        # Generate an API token if it doesn't exist
+        if not user.api_token:
+            user.api_token = uuid.uuid4().hex
+            user.save(update_fields=["api_token"])
+
         request.session.cycle_key()
         request.session["app_user_id"] = user.user_id
 
@@ -92,7 +98,8 @@ class LoginView(APIView):
                     "user_id": user.user_id,
                     "name": user.name,
                     "email": user.email,
-                }
+                },
+                "apiToken": user.api_token,
             },
             status=status.HTTP_200_OK
         )
