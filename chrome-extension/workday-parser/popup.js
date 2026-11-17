@@ -66,21 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
             status.classList.add('success');
 
             try {
-                const csrfResponse = await fetch(`${API_BASE}/api/auth/csrf/`, {
-                    credentials: 'include',
-                });
-
-                if (!csrfResponse.ok) {
-                    throw new Error('Unable to initialize login.');
-                }
-
-                const { csrfToken } = await csrfResponse.json();
-                const response = await fetch(`${API_BASE}/api/auth/login/`, {
+                
+                const response = await fetch(`${API_BASE}/api/auth/extension-login/`, {
                     method: 'POST',
-                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken,
                     },
                     body: JSON.stringify({ email, password }),
                 });

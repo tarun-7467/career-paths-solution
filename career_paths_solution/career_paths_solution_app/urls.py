@@ -5,7 +5,7 @@ from .views import (
     ReminderListCreateView,
     ReminderDetailView,
 )
-from .auth_views import RegisterView, LoginView, LogoutView, CSRFTokenView, CurrentUserView
+from .auth_views import RegisterView, LoginView, LogoutView, CSRFTokenView, CurrentUserView, ExtensionLoginView
 
 urlpatterns = [
     path(
@@ -37,6 +37,11 @@ urlpatterns = [
         "auth/login/",
         LoginView.as_view(),
         name="auth-login"
+    ),
+    path(
+        "auth/extension-login/",
+        ExtensionLoginView.as_view(),
+        name="auth-extension-login"
     ),
     path(
         "auth/logout/",
