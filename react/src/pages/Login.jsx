@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import '../stylesheets/Auth.css';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -50,43 +51,61 @@ function Login() {
   };
 
   return (
-    <main>
-      <h1>Career Paths Solution</h1>
-      <h2>Log In</h2>
+    <main className="auth-page">
+      <section className="auth-card">
+        <h1 className="auth-brand">Career Paths Solution</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="login-email">Email</label>
-          <input
-            id="login-email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
-        </div>
+        <h2 className="auth-title">Welcome Back</h2>
+        <p className="auth-subtitle">
+          Log in to manage your job applications.
+        </p>
 
-        <div>
-          <label htmlFor="login-password">Password</label>
-          <input
-            id="login-password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="auth-field">
+            <label htmlFor="login-email">Email</label>
+            <input
+              className="auth-input"
+              id="login-email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </div>
 
-        {error && <p role="alert">{error}</p>}
+          <div className="auth-field">
+            <label htmlFor="login-password">Password</label>
+            <input
+              className="auth-input"
+              id="login-password"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+          </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Log In'}
-        </button>
-      </form>
+          {error && (
+            <p className="auth-error" role="alert">
+              {error}
+            </p>
+          )}
 
-      <p>
-        Don't have an account? <a href="/register">Register</a>
-      </p>
+          <button
+            className="auth-button"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Log In'}
+          </button>
+        </form>
+
+        <p className="auth-footer">
+          Don't have an account? <a href="/register">Register</a>
+        </p>
+      </section>
     </main>
   );
 }

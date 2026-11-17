@@ -3,11 +3,12 @@ from urllib.parse import urlsplit
 
 from django.db import transaction
 from rest_framework import generics, status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import JobApplication
-from .serializers import JobApplicationSerializer
+from .models import JobApplication, Reminder
+from .serializers import JobApplicationSerializer, ReminderSerializer
 from .authentication import AppSessionAuthentication, ExtensionTokenAuthentication
 
 
@@ -31,7 +32,6 @@ def build_stable_job_key(requisition_id, job_url):
     return hashlib.sha256(identifier.encode("utf-8")).hexdigest()
 
 
-
 class JobApplicationListCreateView(generics.ListCreateAPIView):
     serializer_class = JobApplicationSerializer
     authentication_classes = [ExtensionTokenAuthentication, AppSessionAuthentication]
@@ -50,7 +50,6 @@ class JobApplicationListCreateView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         application_data = serializer.validated_data
-
         user = request.user
         requisition_id = application_data.get("requisition_id") or ""
         job_url = application_data.get("job_url") or ""
@@ -94,7 +93,9 @@ class JobApplicationListCreateView(generics.ListCreateAPIView):
                 response_serializer = self.get_serializer(existing)
                 return Response(response_serializer.data, status=status.HTTP_200_OK)
 
-            application = serializer.save(user=user, stable_job_key=stable_job_key)
+            application = serializer.save(
+                user=request.user, stable_job_key=stable_job_key
+            )
 
         response_serializer = self.get_serializer(application)
         return Response(
@@ -126,3 +127,35 @@ class JobApplicationDetailView(generics.RetrieveUpdateDestroyAPIView):
         )
         stable_job_key = build_stable_job_key(requisition_id, job_url)
         serializer.save(stable_job_key=stable_job_key)
+
+
+class ReminderListCreateView(generics.ListCreateAPIView):
+    serializer_class = ReminderSerializer
+    authentication_classes = [AppSessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Only reminders that belong to the logged-in user's applications
+        return Reminder.objects.filter(job__user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Don't allow adding a reminder to someone else's application
+        if serializer.validated_data["job"].user != self.request.user:
+            raise PermissionDenied("This application does not belong to you.")
+        serializer.save()
+
+
+class ReminderDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ReminderSerializer
+    authentication_classes = [AppSessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    lookup_field = "reminder_id"
+
+    def get_queryset(self):
+        return Reminder.objects.filter(job__user=self.request.user)
+
+    def perform_update(self, serializer):
+        # The application can't be changed after a reminder is created,
+        # so a reminder can never be moved onto someone else's application.
+        serializer.validated_data.pop("job", None)
+        serializer.save()
