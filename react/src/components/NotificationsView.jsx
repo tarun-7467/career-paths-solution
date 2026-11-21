@@ -14,6 +14,52 @@ async function getCsrfToken() {
   return csrfToken;
 }
 
+// Check the form on the client before calling the API.
+// Returns an object like { title: '...' }; empty means the form is valid.
+function validateReminder({ jobId, title, reminderDate }) {
+  const errors = {};
+  if (!jobId) errors.jobId = 'Please select an application.';
+  if (!title.trim()) errors.title = 'Please enter a reminder label.';
+  if (!reminderDate) {
+    errors.reminderDate = 'Please choose a date.';
+  } else {
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    if (reminderDate < today) errors.reminderDate = 'Please choose today or a future date.';
+  }
+  return errors;
+}
+
+// Turn a failed API response (Django REST Framework style) into form errors.
+async function parseServerErrors(response) {
+  let data = null;
+  try {
+    data = await response.json();
+  } catch {
+    // response had no JSON body
+  }
+
+  const fieldMap = {
+    job: 'jobId',
+    reminder_name: 'title',
+    reminder_date: 'reminderDate',
+  };
+  const errors = {};
+
+  if (data && typeof data === 'object') {
+    Object.entries(data).forEach(([key, value]) => {
+      const message = Array.isArray(value) ? value.join(' ') : String(value);
+      errors[fieldMap[key] || 'form'] = message;
+    });
+  }
+  if (Object.keys(errors).length === 0) {
+    errors.form = `Could not save the reminder (error ${response.status}).`;
+  }
+  return errors;
+}
+
+const errorStyle = { color: '#b00020', margin: '4px 0 8px' };
+
 function NotificationsView() {
   // STATE 1: reminders for the logged-in user (from the database)
   const [reminders, setReminders] = useState([]);
@@ -23,6 +69,15 @@ function NotificationsView() {
 
   // STATE 3: what the user is typing in the add-reminder form
   const [formData, setFormData] = useState({ title: '', reminderDate: '', jobId: '' });
+
+  // STATE 4: validation / server errors, keyed by field (jobId, title, reminderDate, form)
+  const [errors, setErrors] = useState({});
+
+  // STATE 5: request status
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   // Load applications and reminders when the page opens.
   // Django only returns the logged-in user's data.
@@ -40,21 +95,33 @@ function NotificationsView() {
         setReminders(await remindersResponse.json());
       } catch (error) {
         console.error('Failed to load reminders:', error);
+        setLoadError('Could not load your reminders. Please refresh the page and try again.');
+      } finally {
+        setIsLoading(false);
       }
     };
     loadData();
   }, []);
 
-  // HANDLER: update the form as the user types
+  // HANDLER: update the form as the user types (and clear that field's error)
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((previous) => ({ ...previous, [name]: value }));
+    setErrors((previous) => ({ ...previous, [name]: undefined, form: undefined }));
   };
 
-  // HANDLER: add a reminder (saved in the database)
+  // HANDLER: validate, then add a reminder (saved in the database)
   const handleAddReminder = async (event) => {
     event.preventDefault();
-    if (!formData.title || !formData.reminderDate || !formData.jobId) return;
+    if (isSaving) return;
+
+    const clientErrors = validateReminder(formData);
+    if (Object.keys(clientErrors).length > 0) {
+      setErrors(clientErrors);
+      return;
+    }
+    setErrors({});
+    setIsSaving(true);
 
     try {
       const csrfToken = await getCsrfToken();
@@ -67,21 +134,32 @@ function NotificationsView() {
         },
         body: JSON.stringify({
           job: Number(formData.jobId),
-          reminder_name: formData.title,
+          reminder_name: formData.title.trim(),
           reminder_date: formData.reminderDate.slice(0, 10), // database stores the date only
         }),
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      if (!response.ok) {
+        // Keep what the user typed and show the server's messages next to the fields
+        setErrors(await parseServerErrors(response));
+        return;
+      }
+
       const created = await response.json();
       setReminders((previous) => [...previous, created]);
-      setFormData({ title: '', reminderDate: '', jobId: '' });
+      setFormData({ title: '', reminderDate: '', jobId: '' }); // clear only on success
+      setErrors({});
     } catch (error) {
       console.error('Failed to add reminder:', error);
+      setErrors({ form: 'Could not save the reminder. Please try again.' });
+    } finally {
+      setIsSaving(false);
     }
   };
 
   // HANDLER: delete a reminder (removed from the database)
   const handleDeleteReminder = async (id) => {
+    setDeleteError('');
     try {
       const csrfToken = await getCsrfToken();
       const response = await fetch(`/api/reminders/${id}/`, {
@@ -93,6 +171,7 @@ function NotificationsView() {
       setReminders((previous) => previous.filter((r) => r.reminder_id !== id));
     } catch (error) {
       console.error('Failed to delete reminder:', error);
+      setDeleteError('Could not delete the reminder. Please try again.');
     }
   };
 
@@ -143,10 +222,22 @@ function NotificationsView() {
     </li>
   );
 
-  return (
-    <div className="notifications">
+  // The reminder lists, or a loading / error / empty state in their place
+  const renderReminderLists = () => {
+    if (isLoading) return <p>Loading reminders...</p>;
+    if (loadError) return <p role="alert" style={errorStyle}>{loadError}</p>;
 
-      <div className="add-reminder">
+    if (allReminders.length === 0) {
+      return (
+        <div className="empty-state">
+          <p><strong>No reminders yet</strong></p>
+          <p>Choose an application, add a label and a date below, then click "Add Reminder" to create your first one.</p>
+        </div>
+      );
+    }
+
+    return (
+      <>
         <h2>Due now ({dueReminders.length})</h2>
         {dueReminders.length === 0 ? (
           <p>Nothing is due right now.</p>
@@ -164,16 +255,27 @@ function NotificationsView() {
             {upcomingReminders.map((item) => renderReminder(item, false))}
           </ul>
         )}
+      </>
+    );
+  };
+
+  return (
+    <div className="notifications">
+
+      <div className="add-reminder">
+        {renderReminderLists()}
+        {deleteError && <p role="alert" style={errorStyle}>{deleteError}</p>}
       </div>
 
       <h2>Add a reminder</h2>
-      <form onSubmit={handleAddReminder}>
-        <label>Application</label>
+      <form onSubmit={handleAddReminder} noValidate>
+        <label htmlFor="reminder-job">Application</label>
         <select className="form-input"
+          id="reminder-job"
           name="jobId"
           value={formData.jobId}
           onChange={handleChange}
-          required
+          aria-invalid={!!errors.jobId}
         >
           <option value="">Select an application</option>
           {jobs.map((job) => (
@@ -182,24 +284,39 @@ function NotificationsView() {
             </option>
           ))}
         </select>
-        <label>Reminder label</label>
+        {!isLoading && !loadError && jobs.length === 0 && (
+          <p>You have no applications yet. Add an application first, then you can set reminders for it.</p>
+        )}
+        {errors.jobId && <p role="alert" style={errorStyle}>{errors.jobId}</p>}
+
+        <label htmlFor="reminder-title">Reminder label</label>
         <input className="form-input"
+          id="reminder-title"
           type="text"
           name="title"
           value={formData.title}
           onChange={handleChange}
           placeholder="Reminder (e.g. Follow up with Meta)"
-          required
+          aria-invalid={!!errors.title}
         />
-        <label>Reminder date</label>
+        {errors.title && <p role="alert" style={errorStyle}>{errors.title}</p>}
+
+        <label htmlFor="reminder-date">Reminder date</label>
         <input className="form-input"
+          id="reminder-date"
           type="date"
           name="reminderDate"
           value={formData.reminderDate}
           onChange={handleChange}
-          required
+          aria-invalid={!!errors.reminderDate}
         />
-        <button className="button secondary" type="submit">Add Reminder</button>
+        {errors.reminderDate && <p role="alert" style={errorStyle}>{errors.reminderDate}</p>}
+
+        {errors.form && <p role="alert" style={errorStyle}>{errors.form}</p>}
+
+        <button className="button secondary" type="submit" disabled={isSaving}>
+          {isSaving ? 'Saving...' : 'Add Reminder'}
+        </button>
       </form>
 
     </div>
